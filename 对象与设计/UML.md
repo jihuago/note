@@ -82,7 +82,7 @@ UML用实现来描述接口和实现接口的类之间的关系。因此如果Sh
 
 聚合关系用一条以空心菱形开头的线来说明。
 
-在图6-14中，我们定义了两个雷，SchoolClass和Pupil。SchoolClass类聚合了Pupil。
+在图6-14中，我们定义了两个类，SchoolClass和Pupil。SchoolClass类聚合了Pupil。
 
 学生组成一个班级，但是相同的Pupil对象可以同时被不同的SchoolClass实例引用。如果我们要删除一个学校类，不需要同时删除它引用的这些学生类，因为学生类还可以引入到其他班级。
 
