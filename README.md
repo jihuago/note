@@ -12,6 +12,7 @@
 * [生成器](./Generator)
 * [trait](./trait)
 * [对象与设计模式](./对象与设计)
+* [php新特性](./php_new_feature)
 
 ### Redis
 
