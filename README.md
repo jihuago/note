@@ -1,4 +1,6 @@
 # note
+学习笔记记录与分享，欢迎关注个人公众号
+![](./images/qrcode_for_gh_94622bd12da2_258.jpg)
 
 ## 服务器
 
@@ -13,6 +15,7 @@
 * [trait](./trait)
 * [对象与设计模式](./对象与设计)
 * [php新特性](./php_new_feature)
+* [一文说清CGI、FastCGI关系](./HTTP/一文说清CGI、FastCGI关系.md)
 
 ### Redis
 
