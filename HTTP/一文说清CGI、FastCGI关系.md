@@ -53,3 +53,8 @@ php-fpm是PHP FastCGI管理器。FastCGI只是一个协议规范，需要每个�
 * 支持平滑重启，就是收到重启信号后，先kill掉空闲worker进程，新的worker用新的配置
 * 可以根据请求来访压力变化动态增减worker进程数量
 
+### 参考
+
+* https://zhuanlan.zhihu.com/p/110540192
+* https://zh.wikipedia.org/wiki/FastCGI#cite_note-FastCGI_Specification-1
+* https://www.jmarshall.com/easy/cgi/
