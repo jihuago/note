@@ -18,5 +18,5 @@
 * [一文说清CGI、FastCGI关系](./HTTP/一文说清CGI、FastCGI关系.md)
 
 ### Redis
-
+* [redis底层数据结构](redis/redis底层数据结构.md)
 * [使用redis避免超卖的一个简单demo](./redis/rush_to_purchase)
