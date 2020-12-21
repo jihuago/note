@@ -20,3 +20,6 @@
 ### Redis
 * [redis底层数据结构](./redis/redis底层数据结构.md)
 * [使用redis避免超卖的一个简单demo](./redis/rush_to_purchase)
+
+### MySQL
+* [mysql主备如何保持一致的](./mysql/mysql主备如何保持一致.md)
