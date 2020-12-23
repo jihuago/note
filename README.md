@@ -9,12 +9,12 @@
 
 ### PHP
 
-* [常用的函数](./functions/)
-* [匿名函数](./Anonymous_functions)
-* [生成器](./Generator)
-* [trait](./trait)
+* [常用的函数](php/functions/)
+* [匿名函数](php/Anonymous_functions)
+* [生成器](php/Generator)
+* [trait](php/trait)
 * [对象与设计模式](./对象与设计)
-* [php新特性](./php_new_feature)
+* [php新特性](php)
 * [一文说清CGI、FastCGI关系](./HTTP/一文说清CGI、FastCGI关系.md)
 
 ### Redis
