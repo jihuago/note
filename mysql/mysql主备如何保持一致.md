@@ -14,14 +14,14 @@
 statement格式，记录到binlog里的是sql语句原文。
 优点：占用空间小；缺点：有些statement格式的binlog可能会导致主备不一致。
 
-2. row格式
+2. row格式（一般采用这种方式）
 当binlog_format使用row格式时，binlog里面记录了真实删除行主键id，这样binlog传到备库的时候，肯定是不存在主备删除不同行的问题
 
 缺点：row很占空间，比如用一个delete语句删除10万行数据，用statement就是一个SQL语句被记录到binlog，占用几十个字节的空间。
 但如果用row格式的binlog，就要把这10万条记录都写到binlog中。
 这样做，不仅会占用更大的空间，同时写binlog也要耗费IO资源，影响执行速度。
 
-3. mixed格式（一般采用这种方式）
+3. mixed格式
 mixed格式：mysql会判断SQL语句是否可能引起主备不一致，如果可能，就用row格式，否则就用statement格式。
 
 ### binlog配置设置
