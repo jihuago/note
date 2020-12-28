@@ -24,3 +24,4 @@
 ### MySQL
 * [mysql主备如何保持一致的](./mysql/mysql主备如何保持一致.md)
 * [到底用不用join](./mysql/到底用不用join.md)
+* [字符串字段加索引](./mysql/怎么给字符串字段加索引.md)
