@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"calc/simplemath"
+	"calc/funcs"
+	"sync"
 )
 
 // 定义一个用于打印程序使用指南的函数
@@ -13,6 +15,8 @@ var Usage = func() {
 	fmt.Println("USAGE: calc command [arguments] ...")
 	fmt.Println("\nThe commands are:\n\tadd\t计算两个数值相加\n\tsqrt\t计算一个非负数的平方根")
 }
+
+var wg sync.WaitGroup
 
 // 程序入口函数
 func main ()  {
@@ -67,6 +71,15 @@ func main ()  {
 		// 打印计算结果
 		fmt.Println("Result: ", ret)
 	// 如果计算方法不支持，打印程序使用指南
+	case "down":
+		for i := 0; i < 3; i++ {
+			wg.Add(1)
+			// go funcs.Download()启动新的协程并发执行download函数
+			go funcs.Download("www.baidu.com/" + string(i+'0'))
+		}
+		wg.Wait()
+		fmt.Println("Done!")
+		break
 	default:
 		Usage()
 	}
