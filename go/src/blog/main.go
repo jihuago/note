@@ -2,10 +2,10 @@ package main
 
 // 引入其它包
 import (
+	"blog/simplemath"
 	"fmt"
 	"os"
 	"strconv"
-	"blog/simplemath"
 )
 
 // 定义一个用于打印程序使用指南的函数
@@ -26,6 +26,7 @@ func main ()  {
 		Usage()
 		return
 	}
+
 
 	// 第二个参数表示计算方法
 	switch args[1] {
