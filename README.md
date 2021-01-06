@@ -19,6 +19,8 @@
 
 ### Redis
 * [redis底层数据结构](./redis/redis底层数据结构.md)
+* [redis主从原理](./redis/redis主从.md)
+* [redis string优缺点](./redis/细究redis-string.md)
 * [使用redis避免超卖的一个简单demo](./redis/rush_to_purchase)
 
 ### MySQL
