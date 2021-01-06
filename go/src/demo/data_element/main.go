@@ -47,4 +47,9 @@ func main()  {
 
 	str := "啊test"
 	fmt.Println(len(str))
+
+	common.TestDataTranfer()
+
+	common.ArrMethod()
+
 }
