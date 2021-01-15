@@ -54,6 +54,7 @@ func ArrMethod() {
 	fmt.Println(q2)
 	fmt.Println(all)
 
+
 }
 
 
