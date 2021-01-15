@@ -1,9 +1,9 @@
 package main
 
 import (
+	"data_element/common"
 	"fmt"
 	"os"
-	"data_element/common"
 )
 
 var Usage = func() {
@@ -41,15 +41,27 @@ func main()  {
 		return
 	}
 
-	firstChr, length := common.GetStringFirstChar("啊test")
-	fmt.Println(firstChr)
-	fmt.Println(length)
+	//firstChr, length := common.GetStringFirstChar("啊test")
+	//fmt.Println(firstChr)
+	//fmt.Println(length)
+	//
+	//str := "啊test"
+	//fmt.Println(len(str))
+	//
+	//common.TestDataTranfer()
+	//
+	//common.ArrMethod()
 
-	str := "啊test"
-	fmt.Println(len(str))
+	// 字典的使用
+	//common.MapTest()
+	//common.TestPointer()
 
-	common.TestDataTranfer()
+	// 控制结构
+	//fmt.Println(common.RelaxTip())
 
-	common.ArrMethod()
+	//函数
+	//common.Run()
 
+	// 正则
+	common.Test()
 }
