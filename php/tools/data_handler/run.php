@@ -5,19 +5,21 @@
  *
  * 运行步骤：
  * 1. 导出上一周csv文件，放到data目录下
-        select `user_id`,
-        `store_name`,
-        `create_time`
-        FROM `gp_order` as o
-        where o.`user_id` in (
-        SELECT distinct o.`user_id`
-        FROM `gp_order` as o
-        where o.`create_time` BETWEEN '2021-01-03 00:00:00'
-        and '2021-01-09 23:59:59'
-        and o.`status`= 3)
+select
+`user_id` ,
+`create_time`,
+`store_id`
+
+FROM `gp_order` as o
+where o.`user_id` in (
+SELECT distinct o.`user_id`
+FROM `gp_order` as o
+where o.`create_time` BETWEEN '2021-01-10 00:00:00'
+and '2021-01-16 23:59:59'
+and o.`status`= 3)
  *
  *  1.1 计算累计客户数
- *      select COUNT(DISTINCT(`user_id`))  from `gp_order` where `status`= 3 and create_time <= 2021-01-09 23:59:59;
+ *      select COUNT(DISTINCT(`user_id`))  from `gp_order` where `status`= 3 and create_time <= ‘2021-01-09 23:59:59’;
  *  1.2 累计再次消费老客户数
  *      select COUNT(`user_id`),
             `user_id`
@@ -233,6 +235,8 @@ $result = (new Run(
     strtotime($endTime)
 ))->getNumberUser();
 
+//var_dump($result);exit;
+
 // 累计再次消费客户数
 $oldUser = (new Run(
     $argv[4]
@@ -246,20 +250,3 @@ $result = array_merge($result, [
 
 
 Run::showDataByTable($result, $beginTime, $endTime);
-/*
- * 小程序染发关联色卡 流程：
- * 1. 客户选择染发项目
- * 2. 选择颜色
- * 3. 到店
- * 4. 发型师在APP点击开始服务
- * 5. 发型师点击物料提取
- * 6. 开始染发
- *
- * 小程序染发不关联色卡 流程：
- * 1. 客户选择染发项目
- * 2. 客户到店，在平板上选择颜色
- * 3. 发型师点击开始服务
- * 4. 取物料，但无法从物料机取物料了。只能从仓库取
- * 5. 开始染发
- *
- */

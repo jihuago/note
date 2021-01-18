@@ -1,5 +1,7 @@
 package common
 
+import "fmt"
+
 // 结构体
 // 定义
 type info struct {
@@ -79,6 +81,58 @@ func Person(p *info)  {
 	* 查看结构体类型T的一个实例占用了多少内存
 		size := unsafe.Sizeof(T{})
 
+	* 匿名字段和内嵌结构体
+		结构体可以包含一个或多个匿名字段，即这些字段没有显示的名字，只有字段的类型是必须的，此时类型就是字段的名字。
+		在一个结构体中对于每一种数据类型只能有一个匿名字段
 
+*/
+
+type innerS struct {
+	in1 int
+	in2 int
+}
+
+type outerS struct {
+	b int
+	c float32
+	int // 匿名字段
+	innerS
+}
+
+func TestOuterS() {
+	// 使用结构体字面量
+	outer := outerS{6, 2.3, 2, innerS{1, 2}}
+
+	fmt.Println(outer)
+
+	type info struct {
+		height float64
+		int
+		string
+	}
+
+	type person struct {
+		info
+		int
+		height int
+	}
+
+	p1 := info{height: 175.2, int: 2, string: "aa"}
+	fmt.Println(p1)
+
+	p2 := person{info{1.2, 2, "aa"}, 3, 12}
+	fmt.Println(p2.info.height)
+}
+
+// 命名冲突
+/*
+	当两个字段拥有相同的名字该怎么办
+		1. 外层名字会覆盖内层名字（但两者的内存空间都保留），这提供了一种重载字段或方法的方式；
+		2. 如果相同的名字在同一级别出现了两次，如果这个名字被程序使用了，将会引发一个错误。
+*/
+
+// 方法
+/*
+	* 在GO语言中，结构体就像是
 */
 
