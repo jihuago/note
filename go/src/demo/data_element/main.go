@@ -66,5 +66,6 @@ func main()  {
 	//common.Test()
 
 	// 结构体
-	common.TestOuterS()
+	//common.TestOuterS()
+	common.TestA()
 }

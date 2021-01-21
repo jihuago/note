@@ -99,6 +99,11 @@ type outerS struct {
 	innerS
 }
 
+type human struct {
+	name string
+	age int
+}
+
 func TestOuterS() {
 	// 使用结构体字面量
 	outer := outerS{6, 2.3, 2, innerS{1, 2}}
@@ -122,6 +127,9 @@ func TestOuterS() {
 
 	p2 := person{info{1.2, 2, "aa"}, 3, 12}
 	fmt.Println(p2.info.height)
+
+	h1 := human{"jack", 12}
+	fmt.Println(h1.GetName())
 }
 
 // 命名冲突
@@ -133,6 +141,21 @@ func TestOuterS() {
 
 // 方法
 /*
-	* 在GO语言中，结构体就像是
+	* 在GO语言中，结构体就像是类的一种简化形式。Go方法是作用在接受者上的一个函数，接受者是某种类型的变量。因此方法是一种特殊类型的函数。
+	* 接受者类型可以是任何类型，不仅仅是结构体类型：任何类型都可以预方法，甚至是函数类型。但接收者不能是一个接口类型。
+	* 类型T上的所有方法的集合叫做类型T的方法集
+	* 定义方法的一般格式
+		func (recv receiver_type) methodName(parameter_list) (return_value_list) {}
+			recv 就像是面向对象语言中的this或self，但GO没有这两个关键字，你可以使用this或self作为receiver的名字
+		* 如果recv是receiver的实例，Method1是它的方法名，那么方法调用遵循传统的object.name  也就是 recv.Method1()
+		* 在GO中，类型的代码和绑定在它上面的方法的代码可以不放在一起，他们可以存在不同的源文件，唯一的要求是：它们必须是同一个包
+
+		4000 * 12 = 48000
 */
+
+// 定义一个方法
+func (this *human) GetName() string {
+	return this.name
+}
+
 
