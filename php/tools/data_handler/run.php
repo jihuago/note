@@ -5,26 +5,29 @@
  *
  * 运行步骤：
  * 1. 导出上一周csv文件，放到data目录下
-        select `user_id`,
-        `store_name`,
-        `create_time`
-        FROM `gp_order` as o
-        where o.`user_id` in (
-        SELECT distinct o.`user_id`
-        FROM `gp_order` as o
-        where o.`create_time` BETWEEN '2021-01-03 00:00:00'
-        and '2021-01-09 23:59:59'
-        and o.`status`= 3)
+select
+`user_id` ,
+`create_time`,
+`store_id`
+
+FROM `gp_order` as o
+where o.`user_id` in (
+SELECT distinct o.`user_id`
+FROM `gp_order` as o
+where o.`create_time` BETWEEN '2021-01-10 00:00:00'
+and '2021-01-16 23:59:59'
+and o.`status`= 3)
  *
  *  1.1 计算累计客户数
- *      select COUNT(DISTINCT(`user_id`))  from `gp_order` where `status`= 3 and create_time <= 2021-01-09 23:59:59;
+ *      select COUNT(DISTINCT(`user_id`))  from `gp_order` where `status`= 3 and create_time <= '2021-01-09 23:59:59';
  *  1.2 累计再次消费老客户数
- *      select COUNT(`user_id`),
-            `user_id`
+ *     select COUNT(`user_id`),
+        `user_id`,
+        `store_id`
         from `gp_order`
-        where create_time<= '2021-01-09 23:59:59'
+        where create_time<= '2021-01-19 23:59:59'
         and `status`= 3
-        GROUP BY `user_id`
+        GROUP BY `user_id`,`store_id`
         HAVING COUNT(`user_id`)> 1;
  *  2. 运行脚本
  *      php run.php 开始日期(Y-m-d) 结束日期   1步骤得到的文件    1.2得到的文件   1.1步骤得到的结果数字
@@ -117,36 +120,82 @@ class Run
         // 将$storeUserNumbser中门店ID替换成门店名字
         foreach ($this->storeInfo() as $storeId => $storeName) {
             $storeUserNumbser[$storeName] = $storeUserNumbser[$storeId];
-//            $storeUserNumbser[iconv('utf-8', 'gbk//IGNORE', $storeName)] = $storeUserNumbser[$storeId];
+
             unset($storeUserNumbser[$storeId]);
         }
 
         return [
             'new' => $newUserNumbers,
             'old' => $oldUserNumbers,
-//            'oldUIDs' => join(',', $oldUserIds),
             // 门店数据
             'store' => $storeUserNumbser
         ];
 
     }
 
-    // 获取累计客户数
-    public function countUserNumber()
+    // 累计再次消费客户数，累计各店再次消费客户数
+    public function countUserNumber():array
     {
+        // 累计再次消费客户数
         $num = 0;
+
+        $storeIds = array_merge(array_keys($this->storeInfo()), [0]);
+
+        // 累计各店再次消费人数
+        $storeCustomer = array_fill_keys($storeIds, 0);
+
         foreach ($this->getData() as $key => $row) {
             if ($key == 0) {
                 continue;
             }
+
+            $storeCustomer[$row[2]]++;
             $num ++;
         }
 
-        return $num;
+        foreach ($storeCustomer as $storeId => $number) {
+
+            if ($storeId == 0) {
+                $storeCustomer['直接购买会员'] = $number;
+                unset($storeCustomer[$storeId]);
+                break;
+            }
+
+            $storeCustomer[$this->storeInfo()[$storeId]] = $number;
+            unset($storeCustomer[$storeId]);
+        }
+
+        return [
+            'oldUser' => $num,
+            'storeCustomer' => $storeCustomer,
+        ];
     }
 
     public static function showDataByTable($data, $beginTime, $endTime)
     {
+
+        $table = <<<EOT
+<table cellspacing="0" cellpadding="0" border="1">
+<tr>
+    <td>门店</td>
+    <td>累计老客户再次消费人数</td>
+</tr>
+EOT;
+        foreach ($data['storeCustomer'] as $storeName => $number) {
+            $table .= <<<EOT
+<tr>
+    <td>{$storeName}</td>
+    <td>{$number}</td>
+</tr>
+EOT;
+
+        }
+
+        $table .= <<<EOT
+</table>
+<hr style="border: 3px solid black">
+EOT;
+
         $str = <<<EOT
         <html>
         <head>
@@ -165,6 +214,7 @@ class Run
 </head>
 <body style="margin: 100px;">
 <h2>2020-12-06至{$endTime}，所有门店累计消费客户数：{$data['userNumber']}，累计再次消费老客户数：{$data['oldUser']}</h2>
+{$table}
 <h3>上周({$beginTime}至{$endTime})各门店数据客户数据统计</h3>
 <h4>上周新增客户人数共{$data['new']}人，上周老客户再次消费共{$data['old']}人。</h4>
 <table cellspacing="0" cellpadding="0" border="1">
@@ -233,33 +283,15 @@ $result = (new Run(
     strtotime($endTime)
 ))->getNumberUser();
 
+
 // 累计再次消费客户数
-$oldUser = (new Run(
+$oldUsers = (new Run(
     $argv[4]
 ))->countUserNumber();
 
 $row = $argv['5'];// select COUNT(DISTINCT(`user_id`))  from `gp_order` where `status`= 3; 得到的结果
 $result = array_merge($result, [
     'userNumber' => $row,
-    'oldUser' => $oldUser,
-]);
-
+], $oldUsers);
 
 Run::showDataByTable($result, $beginTime, $endTime);
-/*
- * 小程序染发关联色卡 流程：
- * 1. 客户选择染发项目
- * 2. 选择颜色
- * 3. 到店
- * 4. 发型师在APP点击开始服务
- * 5. 发型师点击物料提取
- * 6. 开始染发
- *
- * 小程序染发不关联色卡 流程：
- * 1. 客户选择染发项目
- * 2. 客户到店，在平板上选择颜色
- * 3. 发型师点击开始服务
- * 4. 取物料，但无法从物料机取物料了。只能从仓库取
- * 5. 开始染发
- *
- */

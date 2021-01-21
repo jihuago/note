@@ -63,5 +63,9 @@ func main()  {
 	//common.Run()
 
 	// 正则
-	common.Test()
+	//common.Test()
+
+	// 结构体
+	//common.TestOuterS()
+	common.TestA()
 }
