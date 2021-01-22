@@ -67,5 +67,13 @@ func main()  {
 
 	// 结构体
 	//common.TestOuterS()
-	common.TestA()
+	//common.TestA()
+
+	//readAndWriteData.GetUserInput()
+	//readAndWriteData.SwitchInput()
+	//readAndWriteData.ReadTxtFile()
+
+	// panic
+	//common.Close()
+	common.TestRecover()
 }
