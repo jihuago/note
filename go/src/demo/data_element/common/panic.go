@@ -37,3 +37,29 @@ func TestRecover()  {
 	// 引发panic
 	panic(errors.New("something wrong"))
 }
+
+// 某些场景下，使用panic是一个很好的流程控制工具
+func first()  {
+	//panic(errors.New("first crash"))
+	panic("first crash")
+}
+
+func second()  {
+	panic(errors.New("second crash"))
+}
+
+func Do() (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			//fmt.Println(r)
+			err := fmt.Errorf("Error: %v", r)
+			fmt.Println(err)
+		}
+
+	}()
+
+	first()
+	second()
+
+	return err
+}
