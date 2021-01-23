@@ -1,7 +1,7 @@
 package main
 
 import (
-	"data_element/common"
+	"data_element/readAndWriteData"
 	"fmt"
 	"os"
 )
@@ -67,5 +67,25 @@ func main()  {
 
 	// 结构体
 	//common.TestOuterS()
-	common.TestA()
+	//common.TestA()
+
+	// 文件操作
+	//readAndWriteData.GetUserInput()
+	//readAndWriteData.SwitchInput()
+	//readAndWriteData.ReadTxtFile()
+	//readAndWriteData.ReadFile2()
+	//readAndWriteData.ReadCsv()
+	//readAndWriteData.WriteFile()
+	page := readAndWriteData.Page{"./public/page.txt", []byte{
+		'a', 'b',
+	}}
+
+	//page.Save()
+	c, err := page.Load("./public/page.txt")
+	fmt.Println(c, err)
+
+	// panic
+	//common.Close()
+	//common.TestRecover()
+	//common.Do()
 }
