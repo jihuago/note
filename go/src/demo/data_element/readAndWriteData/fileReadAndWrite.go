@@ -54,9 +54,28 @@ func ReadTxtFile() {
 // 按列读取文件中的数据
 // 如果数据是按列排列并用空格分隔的，你可以使用fmt包提供的以FScan开头的一系列函数来读取他们
 func ReadFile2()  {
-/*	file, err := os.Open("./public/product2.txt")
+	file, err := os.Open("./public/product2.txt")
 
 	if err != nil {
 		panic(err)
-	}*/
+	}
+	defer file.Close()
+
+	var col1, col2, col3 []string
+
+	for {
+		var c1, c2, c3 string
+		n, err := fmt.Fscanln(file, &c1, &c2, &c3)
+
+		if err != nil {
+			break
+		}
+
+		col1 = append(col1, c1)
+		col2 = append(col2, c2)
+		col3 = append(col3, c3)
+		fmt.Println("i:", n)
+	}
+
+	fmt.Println(col1, col2, col3)
 }
