@@ -1,7 +1,7 @@
 package main
 
 import (
-	"data_element/readAndWriteData"
+	"data_element/common"
 	"fmt"
 	"os"
 )
@@ -76,16 +76,28 @@ func main()  {
 	//readAndWriteData.ReadFile2()
 	//readAndWriteData.ReadCsv()
 	//readAndWriteData.WriteFile()
-	page := readAndWriteData.Page{"./public/page.txt", []byte{
+/*	page := readAndWriteData.Page{"./public/page.txt", []byte{
 		'a', 'b',
 	}}
 
 	//page.Save()
 	c, err := page.Load("./public/page.txt")
-	fmt.Println(c, err)
+	fmt.Println(c, err)*/
+
+	// 文件拷贝
+	//i, err := readAndWriteData.CopyFile("./public/dst1.txt", "./public/a2.txt")
+	//fmt.Println(i, err)
+
+	// 从命令韩读取参数
+	//common.TestArgs()
+	//common.HelloWho()
 
 	// panic
 	//common.Close()
 	//common.TestRecover()
 	//common.Do()
+
+	// 类型的String()方法
+	p := common.Person1{}
+	p.Init()
 }
