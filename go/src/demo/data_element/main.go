@@ -1,9 +1,8 @@
 package main
 
 import (
-	"data_element/common"
+	"data_element/reflect"
 	"fmt"
-	"os"
 )
 
 var Usage = func() {
@@ -35,11 +34,11 @@ func main()  {
 	fmt.Println(res)
 	fmt.Println(res4)*/
 
-	args := os.Args
+/*	args := os.Args
 	if args == nil || len(args) < 2 {
 		Usage()
 		return
-	}
+	}*/
 
 	//firstChr, length := common.GetStringFirstChar("啊test")
 	//fmt.Println(firstChr)
@@ -98,6 +97,31 @@ func main()  {
 	//common.Do()
 
 	// 类型的String()方法
-	p := common.Person1{}
-	p.Init()
+	//p := common.Person1{}
+	//p.Init()
+
+	// 垃圾回收和SetFinalizer
+	//common.GetMemStatus()
+
+	// 接口与反射
+	//_interface.Init()
+
+/*	var s _interface.Simple
+	_interface.InitSimpler(&s)
+
+	// 类型断言
+	_interface.CheckVarI()
+
+	_interface.TestEmptyInterface()*/
+
+	// 接口，写文件
+/*	var arr []string
+	arr = []string{
+		"this", "name",
+	}
+	fileLog := log.FileLog{"./public/2021.log", arr}
+	fileLog.Write()*/
+
+
+	reflect.TestReflect()
 }
