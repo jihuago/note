@@ -1,9 +1,8 @@
 package main
 
 import (
-	"data_element/readAndWriteData"
+	"data_element/reflect"
 	"fmt"
-	"os"
 )
 
 var Usage = func() {
@@ -35,11 +34,11 @@ func main()  {
 	fmt.Println(res)
 	fmt.Println(res4)*/
 
-	args := os.Args
+/*	args := os.Args
 	if args == nil || len(args) < 2 {
 		Usage()
 		return
-	}
+	}*/
 
 	//firstChr, length := common.GetStringFirstChar("啊test")
 	//fmt.Println(firstChr)
@@ -76,16 +75,53 @@ func main()  {
 	//readAndWriteData.ReadFile2()
 	//readAndWriteData.ReadCsv()
 	//readAndWriteData.WriteFile()
-	page := readAndWriteData.Page{"./public/page.txt", []byte{
+/*	page := readAndWriteData.Page{"./public/page.txt", []byte{
 		'a', 'b',
 	}}
 
 	//page.Save()
 	c, err := page.Load("./public/page.txt")
-	fmt.Println(c, err)
+	fmt.Println(c, err)*/
+
+	// 文件拷贝
+	//i, err := readAndWriteData.CopyFile("./public/dst1.txt", "./public/a2.txt")
+	//fmt.Println(i, err)
+
+	// 从命令韩读取参数
+	//common.TestArgs()
+	//common.HelloWho()
 
 	// panic
 	//common.Close()
 	//common.TestRecover()
 	//common.Do()
+
+	// 类型的String()方法
+	//p := common.Person1{}
+	//p.Init()
+
+	// 垃圾回收和SetFinalizer
+	//common.GetMemStatus()
+
+	// 接口与反射
+	//_interface.Init()
+
+/*	var s _interface.Simple
+	_interface.InitSimpler(&s)
+
+	// 类型断言
+	_interface.CheckVarI()
+
+	_interface.TestEmptyInterface()*/
+
+	// 接口，写文件
+/*	var arr []string
+	arr = []string{
+		"this", "name",
+	}
+	fileLog := log.FileLog{"./public/2021.log", arr}
+	fileLog.Write()*/
+
+
+	reflect.TestReflect()
 }
