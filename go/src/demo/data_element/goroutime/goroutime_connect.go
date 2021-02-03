@@ -1,4 +1,9 @@
-package main
+package goroutime
+
+import (
+	"fmt"
+	"time"
+)
 
 // 协程间的通信
 /*
@@ -23,7 +28,7 @@ package main
 	* 通信操作符 <-
 		* 信息按照箭头的方向流动
 		* 流向通道（发送）
-			ch <- int1 表示：用通达ch发送变量int1
+			ch <- int1 表示：用通道ch发送变量int1
 		* 从通道流出（接收），三种方式
 			1. int2 = <- ch  表示：变量int2从通道接收数据，变量int2如果没有声明： int2 := <- ch
 
@@ -31,3 +36,29 @@ package main
 				if <- ch != 1000 {}
 			同一个操作符 <- 既用于发送也用于接收，但Go会根据操作对象弄明白该干什么。
  */
+
+func Testgoroutime()  {
+	ch := make(chan string)
+
+	go sendData(ch)
+	go getData(ch)
+
+	time.Sleep(1e9)
+}
+
+func sendData(ch chan string)  {
+	ch <- "Washington"
+	ch <- "Tripoli"
+	ch <- "London"
+	ch <- "Beijing"
+	ch <- "Tokyo"
+}
+
+func getData(ch chan string)  {
+	var input string
+	//time.Sleep(2e9)
+	for {
+		input = <- ch
+		fmt.Printf("%s ", input)
+	}
+}

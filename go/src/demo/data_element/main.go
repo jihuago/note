@@ -1,7 +1,7 @@
 package main
 
 import (
-	"data_element/reflect"
+	"data_element/common_package"
 	"fmt"
 )
 
@@ -123,5 +123,16 @@ func main()  {
 	fileLog.Write()*/
 
 
-	reflect.TestReflect()
+	//reflect.TestReflect()
+
+	// 协程
+	//goroutime.Testgoroutime()
+	//goroutime.TestChannle()
+	//goroutime.Testf1()
+	//goroutime.TestChannelBuf()
+	//goroutime.TestGoFor()
+	//goroutime.Test()
+
+	// fmt包
+	common_package.TestFmt()
 }
