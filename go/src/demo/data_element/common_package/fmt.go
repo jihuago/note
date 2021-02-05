@@ -3,6 +3,7 @@ package common_package
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 /*
@@ -45,6 +46,13 @@ import (
 			%x  每个字节用两字符十六进制数表示
 		指针
 			%p   表示为十六进制，并加上前导的ox
+
+	定时器
+		使用time.Tick来设置定时器，定时器的本质上是一个通道(channel)
+		ticker := time.Tick(time.Second) // 定义一个1秒间隔的定时器
+		for i := range ticker {
+			fmt.Println(i)
+		}
 */
 
 func TestFmt()  {
@@ -60,4 +68,59 @@ func TestFmt()  {
 
 	fmt.Printf("姓名：%+v \n", name)
 	fmt.Printf("T:%T \n", name)
+
+
+}
+
+// time.Time类型表示时间。通过time.Now()函数获取当前的时间对象
+func TestTime()  {
+	now := time.Now()
+	year := now.Year()
+	Month := now.Month()
+	day := now.Day()
+
+	unix := now.Unix() // 当前时间戳
+	unixNano := now.UnixNano() // 当前纳秒时间戳
+
+	fmt.Printf("Year:%d, day:%02d, Month:%02d,时间戳:%v,纳秒：%v\n", year, day, Month, unix, unixNano)
+
+	later := setTimeAfter(time.Minute * 3)
+
+	// 时间类型自带的方法Format进行格式化，Go语言中格式化时间模板不是常见的Y-m-d H:M:S 而是 2006年1月2号15点04分（记忆口诀2006 1 2 3 4）
+	fmt.Println(later, now.Format("2006/01/02"))
+
+	// 解析字符串格式的时间
+	// 加载时区
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(loc)
+
+	time := Date(time.Now(), "2006/01/02 03:04:05")
+	fmt.Println(time)
+}
+
+func setTimeAfter(duration time.Duration) (time.Time) {
+	now := time.Now()
+	later := now.Add(duration)
+
+	return later
+}
+
+func DemoTicker()  {
+	ticker := time.Tick(time.Second)
+
+	for i := range ticker {
+		fmt.Println(i) // 每秒都会执行
+	}
+}
+
+/*
+
+ */
+func Date(time time.Time, format string) string {
+
+	return time.Format(format)
 }

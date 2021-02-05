@@ -1,13 +1,6 @@
 package main
 
-import (
-	"data_element/common_package"
-	"fmt"
-)
-
-var Usage = func() {
-	fmt.Println("USAGE: calc command [arguments] ...")
-}
+import "data_element/entry_init"
 
 func main()  {
 	// 数据类型
@@ -33,12 +26,6 @@ func main()  {
 	fmt.Println(number2)
 	fmt.Println(res)
 	fmt.Println(res4)*/
-
-/*	args := os.Args
-	if args == nil || len(args) < 2 {
-		Usage()
-		return
-	}*/
 
 	//firstChr, length := common.GetStringFirstChar("啊test")
 	//fmt.Println(firstChr)
@@ -134,5 +121,13 @@ func main()  {
 	//goroutime.Test()
 
 	// fmt包
-	common_package.TestFmt()
+	//common_package.TestFmt()
+	//common_package.TestTime()
+	//common_package.DemoTicker()
+
+	// http
+	//common_package.DemoGet()
+	//common_package.DemoTestWithParam()
+
+	entry_init.Init()
 }
