@@ -8,7 +8,7 @@ Go modules目前集成在Go的工具链中，只要安装了Go，就可以使用
 ## Go Modules基本使用
 生成go.mod文件
 ```shell
-go mod init
+go mod entry_init
 ```
 下载go.mod文件中指明的所有依赖
 ```shell
