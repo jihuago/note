@@ -10,7 +10,7 @@ func Init()  {
 
 	r := router.Default()
 
-	r.Get("/str", controllers.DemoStr)
+	r.Get("/str", controllers.Test)
 	r.Get("/a", controllers.DemoStr)
 
 	r.Run()
