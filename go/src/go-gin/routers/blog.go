@@ -6,6 +6,5 @@ import (
 )
 
 func LoadBlogRouter(r *gin.Engine)  {
-	r.GET("/test2", controller.Index)
-
+	r.GET("/channel", controller.GetResult)
 }
