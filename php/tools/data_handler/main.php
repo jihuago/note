@@ -33,4 +33,41 @@
                  o.`type`,
                  o.`user_id`
         HAVING COUNT(o.`user_id`)> 1;
+
+消费次数大于等于2的客户人数
+SELECT count(*),
+       `user_id`
+  from `gp_order` as o
+ where `status`= 3
+   and `create_time`<= '2021-01-31 23:59:59'
+ GROUP BY `user_id`
+HAVING count(*)>= 2
+
+洗剪吹消费次数大于等于2的客户数
+SELECT count(*),
+       `user_id`
+  from `gp_order` as o
+ where `status`= 3
+   and `create_time`<= '2021-01-31 23:59:59' and `serve_id` IN (1, 15, 18,19,20)
+ GROUP BY `user_id`
+HAVING count(*)>= 2
+
+洗吹造型消费次数大于等于2的客户数
+SELECT count(*),
+       `user_id`
+  from `gp_order` as o
+ where `status`= 3
+   and `create_time`<= '2021-02-25 23:59:59' and `serve_id` IN (14)
+ GROUP BY `user_id`
+HAVING count(*)>= 2
+
+烫染消费次数大于等于2的客户数
+SELECT count(*),
+       `user_id`
+  from `gp_order` as o
+ where `status`= 3
+   and `create_time`<= '2021-02-28 23:59:59' and `serve_id` IN (2,3,10,13,16,17,21,22,23,25)
+ GROUP BY `user_id`
+HAVING count(*)>= 2
+
 */
