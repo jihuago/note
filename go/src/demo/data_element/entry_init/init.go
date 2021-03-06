@@ -18,6 +18,7 @@ func Init()  {
 	r.Get("trace", goroutime.DemoTrace)
 	r.Get("defer_track", common.DemodeferTrack)
 	r.Get("q", controllers.QueryRowDemo)
+	r.Get("str1", controllers.DemoStrings)
 
 	r.Run()
 }
