@@ -30,4 +30,5 @@ func (f *FileLog) Write()  {
 	str := fmt.Sprintf("Log: %v \n", f.LogInfo)
 
 	file.WriteString(str)
+
 }
