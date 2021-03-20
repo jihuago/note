@@ -19,6 +19,7 @@ func Init()  {
 	r.Get("defer_track", common.DemodeferTrack)
 	r.Get("q", controllers.QueryRowDemo)
 	r.Get("str1", controllers.DemoStrings)
+	r.Get("json", controllers.OmitemptyDemo)
 
 	r.Run()
 }
