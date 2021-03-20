@@ -29,6 +29,10 @@ and o.`status`= 3)
         and `status`= 3
         GROUP BY `user_id`,`store_id`
         HAVING COUNT(`user_id`)> 1;
+ *  1.3 上周消费用户数
+ *      SELECT COUNT(DISTINCT(`user_id`))  from `gp_order` as o  where o.`create_time` BETWEEN '2021-02-28 00:00:00'
+and '2021-03-06 23:59:59'
+and o.`status`= 3
  *  2. 运行脚本
  *      php run.php 开始日期(Y-m-d) 结束日期   1步骤得到的文件    1.2得到的文件   1.1步骤得到的结果数字
  *      如： php run.php 2021-01-03 2021-01-09 ./data/sqlresult_5540750.csv ./data/sqlresult_5543420.csv  2345
@@ -191,6 +195,7 @@ EOT;
 
         }
 
+        $consumerNumber = $data['new'] + $data['old'];
         $table .= <<<EOT
 </table>
 <hr style="border: 3px solid black">
@@ -216,7 +221,7 @@ EOT;
 <h2>2020-12-06至{$endTime}，所有门店累计消费客户数：{$data['userNumber']}，累计再次消费老客户数：{$data['oldUser']}</h2>
 {$table}
 <h3>上周({$beginTime}至{$endTime})各门店数据客户数据统计</h3>
-<h4>上周新增客户人数共{$data['new']}人，上周老客户再次消费共{$data['old']}人。</h4>
+<h4>上周总共消费人数{$consumerNumber}人，上周新增客户人数共{$data['new']}人，上周老客户再次消费共{$data['old']}人。</h4>
 <table cellspacing="0" cellpadding="0" border="1">
 <tr>
     <td></td>
