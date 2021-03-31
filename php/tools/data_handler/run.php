@@ -246,7 +246,7 @@ EOT;
         $str .= '</table></body></html>';
 
         header('content-type:text/html;charset=utf-8');
-        file_put_contents('./data/' . date('Y-m-d') . '.html', $str);
+        file_put_contents('./data/' . date('Y-m-d H-i') . '.html', $str);
 
     }
 
