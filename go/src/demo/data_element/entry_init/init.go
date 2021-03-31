@@ -20,6 +20,12 @@ func Init()  {
 	r.Get("q", controllers.QueryRowDemo)
 	r.Get("str1", controllers.DemoStrings)
 	r.Get("json", controllers.OmitemptyDemo)
+	r.Get("interview", controllers.DemoInterview)
+	r.Get("channel", controllers.DemoChannel)
+	r.Get("arr", controllers.DemoArr)
+	r.Get("debug", controllers.DemoDebug)
+	r.Get("new", controllers.DemoAboutNew)
+	r.Get("interface", controllers.DemoGC)
 
 	r.Run()
 }
