@@ -1,0 +1,5 @@
+{
+    "require": {
+        "pfinal/excel": "^1.1"
+    }
+}
