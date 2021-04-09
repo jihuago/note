@@ -26,6 +26,7 @@ func Init()  {
 	r.Get("debug", controllers.DemoDebug)
 	r.Get("new", controllers.DemoAboutNew)
 	r.Get("interface", controllers.DemoGC)
+	//r.Get("/go-ji-chu", learnGoWithTest.Hello)
 
 	r.Run()
 }
