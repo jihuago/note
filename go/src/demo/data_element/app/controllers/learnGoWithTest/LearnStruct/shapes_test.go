@@ -18,5 +18,5 @@ func TestPerimeter(t *testing.T)  {
 
 // 3. 为运行测试函数编写最少的代码并检查失败时的输出
 func Perimeter(width, height float64) float64 {
-	return 0
+	return 2 * (width + height)
 }
