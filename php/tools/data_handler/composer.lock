@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f538fb206c2e2f2e05f59365656455c0",
+    "content-hash": "f9068706dadb89a17b5a14a874b1f220",
     "packages": [
         {
             "name": "mk-j/php_xlsxwriter",
@@ -53,6 +53,50 @@
                 "xlsx"
             ],
             "time": "2017-03-09T16:25:31+00:00"
+        },
+        {
+            "name": "pfinal/database",
+            "version": "v1.12.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pfinal/database.git",
+                "reference": "910a7d221fc8650033d15264b4fd19109799b3df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pfinal/database/zipball/910a7d221fc8650033d15264b4fd19109799b3df",
+                "reference": "910a7d221fc8650033d15264b4fd19109799b3df",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.0",
+                "symfony/var-dumper": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PFinal\\Database\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zou Yiliang"
+                }
+            ],
+            "description": "PHP MySQL database wrapper, extends PDO and PDOStatement",
+            "homepage": "http://www.pfinal.cn",
+            "support": {
+                "issues": "https://github.com/pfinal/database/issues",
+                "source": "https://github.com/pfinal/database/tree/v1.12.4"
+            },
+            "time": "2020-05-11T08:08:22+00:00"
         },
         {
             "name": "pfinal/excel",
@@ -175,5 +219,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }
