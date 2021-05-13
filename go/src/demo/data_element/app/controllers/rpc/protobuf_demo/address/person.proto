@@ -1,0 +1,27 @@
+// 指定使用protobuf版本
+syntax = "proto3";
+
+// 包名，通过protoc生成go文件
+package address;
+
+// 性别类型
+// 枚举类型第一个字段必须为0
+enum GenderType {
+    SECRET = 0;
+    FEMALE = 1;
+    MALE = 2;
+}
+
+// 人
+message Person {
+    int64 id = 1;
+    string name = 2;
+    GenderType gender = 3;
+    string number = 4;
+}
+
+// 联系簿
+message ContactBook {
+    repeated Person persons = 1;
+}
+

@@ -1,5 +1,6 @@
 {
     "require": {
-        "pfinal/excel": "^1.1"
+        "pfinal/excel": "^1.1",
+        "pfinal/database": "^1.12"
     }
 }
