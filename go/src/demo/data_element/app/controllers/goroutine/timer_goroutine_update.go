@@ -5,14 +5,18 @@ import (
 	"time"
 )
 
+
 // 限制请求频率
 // 扩展上边的代码，思考如何承载周期请求数的暴增（提示：使用带缓冲通道和计时器对象）。
 func LimitRequest()  {
 
-	//ch := make(chan time.Time, 10)
+	// 每秒3个请求，最大同时4个请求
+	duration := time.Second
+	//concurrencyNum := 3
+	concurrencyNumMax := 4
 
-	var dur time.Duration = 1e9
-	ticker := time.NewTicker(dur)
+	ch := make(chan int, concurrencyNumMax)
+	ticker := time.NewTicker(duration)
 
 	defer ticker.Stop()
 
@@ -20,9 +24,21 @@ func LimitRequest()  {
 		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
 	}
 
-	for res := range requests {
+	for key, req := range requests {
+		ch <- key
 		<- ticker.C
-		fmt.Println("update:", res)
+
+		wg.Add(1)
+		go work(ch, req)
+
+		fmt.Println(req)
 	}
 
+	wg.Wait()
+}
+
+func work(ch chan int, k int)  {
+	defer wg.Done()
+	fmt.Println("doing work:", k)
+	<-ch
 }
