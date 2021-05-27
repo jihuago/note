@@ -31,12 +31,7 @@ func GetAuth(c *gin.Context)  {
 			token, err := util.GeneratoToken(username, password)
 			if err != nil {
 				code = e.ERROR_AUTH_TOKEN
-				c.JSON(http.StatusOK, gin.H{
-					"code" : code,
-					"msg" : e.GetMsg(code),
-					"data2" : err,
-				})
-				return
+
 			} else {
 				data["token"] = token
 				code = e.SUCCESS
