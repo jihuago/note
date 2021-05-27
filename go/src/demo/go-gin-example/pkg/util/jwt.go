@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/tmaio/go-gin-example/pkg/setting"
 	"time"
@@ -28,9 +27,12 @@ func GeneratoToken(username, password string) (string, error) {
 		},
 	}
 
-	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err := tokenClaims.SignedString(jwtSecret)
-	fmt.Println(err)
+
+
+
+	
 	return token, err
 }
 
