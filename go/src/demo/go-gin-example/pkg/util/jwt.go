@@ -14,6 +14,7 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
+
 func GeneratoToken(username, password string) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(3 * time.Hour)
@@ -31,8 +32,6 @@ func GeneratoToken(username, password string) (string, error) {
 	token, err := tokenClaims.SignedString(jwtSecret)
 
 
-
-	
 	return token, err
 }
 
