@@ -68,6 +68,10 @@ class Run
                 continue;
             }
 
+            if (! in_array($values[2], array_keys($this->storeInfo()))) {
+                continue;
+            }
+
             $data[$values[0]][] = ['time' => $values[1] ?? 'wrong', 'store_id' => $values[2] ?? 'wrong'];
 
         }
@@ -150,6 +154,11 @@ class Run
 
         foreach ($this->getData() as $key => $row) {
             if ($key == 0) {
+                continue;
+            }
+
+            // 排除不营业的门店
+            if (! in_array($row[2], array_keys($this->storeInfo()))) {
                 continue;
             }
 
@@ -261,11 +270,14 @@ EOT;
     protected function storeInfo()
     {
         return [
-            494 => '天河沃凯街店',
-            495 => '天河保利中宇店', 553 => '海珠江怡路店',
-            554 => '羊城创意园店',
-            496 => '天河金海花园店', 497 => '海珠区叠景中路店',
-            500 => '海珠区愉景南苑店', 501 => '海珠区纵横广场店',
+//            494 => '天河沃凯街店',
+            495 => '天河保利中宇店',
+            553 => '海珠江怡路店',
+//            554 => '羊城创意园店',
+//            496 => '天河金海花园店',
+            497 => '海珠区叠景中路店',
+            500 => '海珠区愉景南苑店',
+            501 => '海珠区纵横广场店',
             552 => '海珠区仲恺店',
         ];
     }
