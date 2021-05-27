@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/tmaio/go-gin-example/models"
@@ -32,7 +31,6 @@ func GetAuth(c *gin.Context)  {
 			token, err := util.GeneratoToken(username, password)
 			if err != nil {
 				code = e.ERROR_AUTH_TOKEN
-				fmt.Println(err)
 				c.JSON(http.StatusOK, gin.H{
 					"code" : code,
 					"msg" : e.GetMsg(code),
