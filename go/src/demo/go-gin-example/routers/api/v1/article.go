@@ -16,7 +16,7 @@ func GetArticle(c *gin.Context)  {
 
 func GetArticles(c *gin.Context)  {
 	total := models.GetArticleTotal(map[string]interface{}{"title": 3333})
-
+	log.Fatalf("this is a test %s", "aaa")
 	c.JSON(http.StatusOK, gin.H{
 		"total": total,
 	})
