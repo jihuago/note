@@ -17,9 +17,9 @@ class CountRepeatBuy
         require __DIR__ . '/vendor/autoload.php';
 
         $config = array(
-            'dsn' => 'mysql:host=192.168.10.10;dbname=fecmall',
-            'username' => 'root',
-            'password' => '123456',
+            'dsn' => 'mysql:host=192.168.10.10;dbname=gipin',
+            'username' => 'homestead',
+            'password' => 'secret',
             'charset' => 'utf8',
             'tablePrefix' => 'gp_',
         );
@@ -115,7 +115,7 @@ EOT;
         $endTime = '2021-05-31 23:59:59';
 
         $serveArr = $this->bigProjectLists();// 大项目
-        //        $serveArr = $this->littleProjectLists();// 小项目
+//                $serveArr = $this->littleProjectLists();// 小项目
 
         $serveIDs = implode(',', $serveArr);
 
@@ -125,9 +125,9 @@ SELECT (count(o.id) - 1) as times,
   from `gp_order` as o LEFT JOIN `gp_employee` as e on o.`employee_id` = e.`id`
  where o.`status`= 3
    and o.`create_time`<= '{$endTime}'
-   and o.`serve_id` IN({$serveIDs}) and o.`order_no` not in ({$this->getTestOrders()})  GROUP BY o.`user_id`,o
-   .`store_name` ,o
-   .`employee_id`
+   and o.`serve_id` IN({$serveIDs}) and o.`order_no` not in ({$this->getTestOrders()})  GROUP BY o.`user_id`,
+   o.`store_name`,
+   o.`employee_id`
 HAVING count(o.id)>=2
 EOT;
 
@@ -202,13 +202,19 @@ EPT;
 
     protected function bigProjectLists()
     {
-        return [2,3,8,10,11,12,13,16,17,21,22,23,24,25,26,27,28,29,30,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47];
+        return [
+            2,3,8,10,11,12,13,16,17,21,22,23,24,25,26,27,
+            28,29,30,32,33,34,35,36,37,38,39,40,41,42,43,
+            44,45,46,47,52,53,54,55,56,57,58,59,60,61,62,
+            63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,
+            78,79,80
+        ];
     }
 
     // 小项目的ID
     protected function littleProjectLists()
     {
-        return [1,14,15,18,19,20,31,48];
+        return [1,14,15,18,19,20,31,48,49,50,51];
     }
 
     public function toCSV(array $data, array $colHeaders = array(), $asString = false)
