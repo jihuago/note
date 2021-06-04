@@ -6,6 +6,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/tmaio/go-gin-example/pkg/setting"
 	"log"
+	"time"
 )
 
 var db *gorm.DB
@@ -16,38 +17,28 @@ type Model struct {
 	ModifiedOn int `json:"modified_on"`
 }
 
-func init()  {
-	var (
-		err error
-		dbType, dbName, user, password, host, tablePrefix string
-	)
+func Setup()  {
+	var err error
 
-	sec, err := setting.Cfg.GetSection("database")
-	if err != nil {
-		log.Fatal(2, "Fail to get section 'database:%v'", err)
-	}
+	dbSetting := setting.DatabaseSetting
 
-	dbType = sec.Key("TYPE").String()
-	dbName = sec.Key("NAME").String()
-	user = sec.Key("USER").String()
-	password = sec.Key("PASSWORD").String()
-	host = sec.Key("HOST").String()
-	tablePrefix = sec.Key("TABLE_PREFIX").String()
-
-	db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		user,
-		password,
-		host,
-		dbName))
+	db, err = gorm.Open(dbSetting.Type, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
+		dbSetting.User,
+		dbSetting.Password,
+		dbSetting.Host,
+		dbSetting.Name))
 
 	if err != nil {
 		log.Println(err)
 	}
 
 	gorm.DefaultTableNameHandler = func (db *gorm.DB, defaultTableName string) string  {
-		return tablePrefix + defaultTableName;
+		return dbSetting.TablePrefix + defaultTableName;
 	}
 
+	// 替换callbakc
+	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
+	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 
 	db.SingularTable(true)
 	db.LogMode(true)
@@ -55,6 +46,34 @@ func init()  {
 	db.DB().SetMaxOpenConns(100)
 
 }
+
+// updateTimeStampForCreateback 会在创建时设置 CreatedOn ModifiedOn字段
+func updateTimeStampForCreateCallback(scope *gorm.Scope)  {
+	if !scope.HasError() {
+		nowTime := time.Now().Unix()
+		if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
+			if createTimeField.IsBlank {
+				createTimeField.Set(nowTime)
+			}
+		}
+
+		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
+			if modifyTimeField.IsBlank {
+				modifyTimeField.Set(nowTime)
+			}
+		}
+	}
+
+}
+
+func updateTimeStampForUpdateCallback(scope *gorm.Scope)  {
+	if _, ok := scope.Get("gorm:update_column"); !ok {
+		scope.SetColumn("ModifiedOn", time.Now().Unix())
+	}
+}
+
+
+
 
 
 

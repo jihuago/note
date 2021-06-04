@@ -5,8 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tmaio/go-gin-example/models"
 	"github.com/tmaio/go-gin-example/pkg/e"
+	"github.com/tmaio/go-gin-example/pkg/logging"
 	"github.com/unknwon/com"
-	"log"
 	"net/http"
 )
 
@@ -16,7 +16,7 @@ func GetArticle(c *gin.Context)  {
 
 func GetArticles(c *gin.Context)  {
 	total := models.GetArticleTotal(map[string]interface{}{"title": 3333})
-	log.Fatalf("this is a test %s", "aaa")
+
 	c.JSON(http.StatusOK, gin.H{
 		"total": total,
 	})
@@ -47,7 +47,8 @@ func DeleteArticle(c *gin.Context)  {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			//log.Printf("err.key: %s, err.message: %s", err.Key, err.Message)
+			logging.Info("err.key: %s, err.message: %s", err.Key, err.Message)
 		}
 	}
 
