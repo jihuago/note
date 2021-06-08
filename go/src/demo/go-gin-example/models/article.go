@@ -5,6 +5,15 @@ import (
 	"time"
 )
 
+/*
+	GORM本身是由回调驱动的，所以我们可以根据需要完全定制GORM，以此达到我们的目的，如下：
+		* 注册一个新的回调
+		* 删除现有的回调
+		* 替换现有的回调
+		* 注册回调的顺序
+	在GORM中包含已上四类Callbacks
+ */
+
 type Article struct {
 	Model
 	TagId int `json:"tag_id" gorm:"index"` // gorm:index 声明这个字段为索引，如果使用自动迁移功能则有影响，不使用无影响
@@ -81,6 +90,12 @@ func AddArticle(data map[string]interface{}) bool {
 
 func DeleteArticle(id int) bool {
 	db.Where("id = ?", id).Delete(&Article{})
+
+	return true
+}
+
+func CleanAllArticle() bool {
+	db.Unscoped().Where("deleted != ?", 0).Delete(&Article{})
 
 	return true
 }

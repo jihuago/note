@@ -35,9 +35,9 @@ class CalCulatRepeat
         require __DIR__ . '/vendor/autoload.php';
 
         $config = array(
-            'dsn' => 'mysql:host=192.168.10.10;dbname=fecmall',
-            'username' => 'root',
-            'password' => '123456',
+            'dsn' => 'mysql:host=192.168.10.10;dbname=gipin',
+            'username' => 'homestead',
+            'password' => 'secret',
             'charset' => 'utf8',
             'tablePrefix' => 'gp_',
         );
@@ -60,6 +60,9 @@ WHERE
 	AND `status` = 3
 EOT;*/
 
+        // 重复购买客户数量/客户样本数量。
+
+        // 客户样本数
         $sql = <<<EOT
 SELECT
 	count(
@@ -72,6 +75,7 @@ WHERE
 	AND `status` = 3
 EOT;
 
+        // 重复购买客户数量
         $sql1 = <<<EOT
 SELECT
 	count(*),
@@ -81,13 +85,23 @@ FROM
 WHERE
 	employee_id = ? 
 	AND `status` = 3 
-	AND create_time <= '2021-05-31 23:59:59' and create_time >= '2021-03-01 00:00:00' AND order_no NOT IN 
+	AND create_time <= '2021-05-31 23:59:59'  AND order_no NOT IN 
 	({$this->getTestOrders()}) 
 	GROUP BY user_id HAVING count(*) >= 2
 EOT;
 
         $data = [];
         foreach ($this->p3LevelHairCuters() as $key => $hairCuter) {
+
+            // 排除测试号发型师
+            if (
+                in_array($hairCuter['id'], array_keys($this->getTestHairCuters()))
+            ||
+                in_array($hairCuter['name'], ['Tony'])
+            ) {
+                continue;
+            }
+
             $allUserNumber = $this->db->findOneBySql($sql, [$hairCuter['id']]);
 
             $data[$hairCuter['id']]['number'] = $allUserNumber['number'];
@@ -108,15 +122,38 @@ EOT;
 
         }
 
-        var_dump($data);exit;
+//        var_dump($data);exit;
+
+        $str = $this->toCSV($data, ['客户数', '重复消费客户数', '复购率', '发型师'], true);
+
+        date_default_timezone_set("PRC");
+        file_put_contents('./data/fugou'.date('Y-m-dHis').'.csv', $str);
+    }
+
+    // 测试号发型师
+    private function getTestHairCuters(): array
+    {
+        return [
+            5682 => '李泽',
+            5681 => '张晓一',
+            5678 => '梁宁',
+            5646 => '李辉',
+            5676 => '陈龙',
+            5672 => '范宇',
+            5675 => '钟伟健',
+        ];
     }
 
     // 获取p3等级的发型师
     public function p3LevelHairCuters():array
     {
         $results = $this->db->table('employee as e')
-            ->field(['id'])
-            ->where(['e.position' => 3, 'status' => 1, 'deleted' => 0])
+            ->field(['id', 'name'])
+            ->where([
+                'e.position' => 1,
+                'status' => 1,
+                'deleted' => 0
+            ])
             ->whereIn('job_status', [1, 2])
             ->whereIn('e.role', [1, 2])
             ->findAll();
