@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tmaio/go-gin-example/models"
 	"github.com/tmaio/go-gin-example/pkg/e"
+	"github.com/tmaio/go-gin-example/pkg/logging"
 	"github.com/tmaio/go-gin-example/pkg/setting"
 	"github.com/tmaio/go-gin-example/pkg/util"
 	"github.com/unknwon/com"
@@ -30,7 +31,7 @@ func GetTags(c *gin.Context)  {
 
 	code := e.SUCCESS
 
-	data["lists"] = models.GetTags(util.GetPage(c), setting.PageSize, maps)
+	data["lists"] = models.GetTags(util.GetPage(c), setting.AppSetting.PageSize, maps)
 	data["total"] = models.GetTagTotal(maps)
 
 	c.JSON(http.StatusOK, gin.H{
@@ -40,6 +41,13 @@ func GetTags(c *gin.Context)  {
 	})
 }
 
+// @Summary 新增文章标签
+// @Produce json
+// @Param name query string true "Name"
+// @Param state query int false "State"
+// @Param created_by query int false "CreatedBy"
+// @Success 200 {string} sjon "{"code":200,"data":{},"msg":"ok"}"
+// @Router /api/v1/tags [post]
 func AddTag(c *gin.Context)  {
 	name := c.Query("name")
 	state := com.StrTo(c.DefaultQuery("state", "0")).MustInt()
@@ -125,6 +133,10 @@ func DeleteTag(c *gin.Context)  {
 			models.DeleteTag(id)
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE
+		}
+	} else {
+		for _, err := range valid.Errors {
+			logging.Info(err.Key, err.Message)
 		}
 	}
 
