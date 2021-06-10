@@ -3,6 +3,7 @@ package entry_init
 import (
 	"data_element/app/controllers"
 	"data_element/app/controllers/db"
+	"data_element/app/controllers/err"
 	"data_element/app/controllers/learnGoWithTest/integers"
 	"data_element/common"
 	"data_element/goroutime"
@@ -31,6 +32,7 @@ func Init()  {
 	r.Get("/go-ji-chu", integers.DemoSumAll)
 	//r.Get("log", log.LogPrint)
 	r.Get("interface", db.DemoGorm)
+	r.Get("err", err.DemoErr)
 
 	r.Run()
 }
