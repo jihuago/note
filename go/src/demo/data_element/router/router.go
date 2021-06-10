@@ -27,6 +27,7 @@ func (r *route) Get(uri string, fun func()) {
 	// 根据命令行传递的参数执行对应代码
 	args := os.Args
 	pathName := args[1]
+
 	_, ok := r.routrMap[uri]
 	if !ok {
 		r.routrMap[uri] = fun
@@ -34,7 +35,7 @@ func (r *route) Get(uri string, fun func()) {
 
 	r.uri = pathName
 	r.run = r.routrMap[pathName]
-
+	//fmt.Println()
 }
 
 func Default() *route  {
@@ -48,7 +49,7 @@ func (r *route) Run(addr ...string)  {
 	defer func() {
 		if re := recover(); re != nil {
 
-			err := fmt.Errorf("Error not found uri: %v", r.uri)
+			err := fmt.Errorf("Error not found uri: %v, detail: %v", r.uri, re)
 			fmt.Println(err)
 		}
 	}()
