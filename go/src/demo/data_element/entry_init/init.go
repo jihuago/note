@@ -33,6 +33,7 @@ func Init()  {
 	//r.Get("log", log.LogPrint)
 	r.Get("interface", db.DemoGorm)
 	r.Get("err", err.DemoErr)
+	r.Get("err1", err.PkgErr)
 
 	r.Run()
 }
