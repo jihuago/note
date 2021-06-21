@@ -74,3 +74,63 @@ func fn() error {
 * 错误要被日志记录
 * 应用程序处理错误，保证100%完整性
 * 之后不再报告当前错误
+
+#### wrap error
+> https://github.com/pkg/errors
+
+通过使用pkg/errors包，可以向错误值添加上下文。
+
+* 如何使用wrap
+    * 在你的应用代码中，使用errors.New或errors.Errorf返回错误。
+ ```html
+
+    import(
+        "github.com/pkg/errors"
+    )
+    func parseArgs(args []string) error {
+        if len(args) < 3 {
+            return errors.Error("not enough arguments, expected at least")
+        }
+    }
+```
+
+    * 如果调用其他包内的函数，通常简单的直接返回
+
+```html
+if err != nil {
+    return err
+}
+```
+
+在有错误的地方，使用wrap，且不需要记录日志，日记的记录交给上层:
+  ```html
+errors.Wrap(err, "write failed")
+```
+ 
+    * 如果和其他库（github库/基础库）进行协作，考虑使用errors.Wrap或者errors.Wrapf保存堆栈信息。同样适用于和标准库协作的时候。
+```html
+f, err := os.Open(path)
+if err != nil {
+    return errors.Wrap(err, "failed to open %q". path)
+}
+```
+  
+    * 直接返回错误，而不是每个错误产生的地方到处打日志
+
+    * 在程序的顶部或者是工作的goroutine的顶部（请求入口），使用 %+v把堆栈详情记录
+```html
+func main() {
+    err := app.Run()
+    if err != nil {
+        fmt.Printf("FATAL: %+v\n", err)
+        os.Exit(1)
+    }
+}
+```
+    * 使用errors.Cause获取root error，再进行和sentinel error判定
+
+    * 基础库，通用库不选择wrap error
+        选择wrap error是只有applications可以选择应用的策略。具有最高可重用性的包只能返回根错误值。
+
+    * 一旦确定函数/方法将处理错误，错误就不再是错误。如果函数/方法依然需要发出返回，则它不能返回错误值。它应该只返回nil
+
