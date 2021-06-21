@@ -117,6 +117,11 @@ class StatisticsDailyReport extends BaseModel
 
     use Tools;
 
+    const TYPE_2 = 2; // 购买会员卡
+    const TYPE_3 = 3; // 购买次卡
+
+    const PAY_TYPE_5 = 5; // 余额支付
+
     public function __construct($startDate, $endDate, $yestoday)
     {
         $this->startDate = $startDate;
@@ -135,9 +140,9 @@ class StatisticsDailyReport extends BaseModel
     {
         return $this->db->table('order as o')
             ->where([
-                'status' => 3,
+                'o.status' => 3,
             ])
-            ->where('create_time between ? and ?', [$startDate, $endDate]);
+            ->where('o.create_time between ? and ?', [$startDate, $endDate]);
 
     }
 
@@ -160,8 +165,8 @@ class StatisticsDailyReport extends BaseModel
                 3 => '护理',
             ],
             'type' => [
-                2 => '购买会员',
-                3 => '购买次卡',
+                self::TYPE_2 => '购买会员',
+                self::TYPE_3 => '购买次卡',
             ],
         ];
 
@@ -226,6 +231,14 @@ class StatisticsDailyReport extends BaseModel
         }
 
         return $data;
+    }
+
+    // 统计每个门店销售会员卡情况
+    protected function calcuEveryStoreCardData($startDate, $endDate, $storeID)
+    {
+        return $this->calcuBaseModel($startDate, $endDate)
+                ->where(['store_id' => $storeID, 'type' => self::TYPE_2])
+                ->sum('pay_price') / 100;
     }
 
     // 计算周各门店业绩环比
@@ -384,6 +397,125 @@ EOT;
 
     }
 
+    private function getCardRechargeStartDate():string
+    {
+        return '2021-06-16 00:00:00';
+    }
+
+    public function rechargeBaseModel($startDate, $endDate, $storeID)
+    {
+        return $this->calcuBaseModel($startDate, $endDate)
+            ->where(['o.store_id' => $storeID, 'type' => self::TYPE_2])
+            ->join('user as u', 'u.id = o.user_id');
+    }
+
+    protected function rechargeData($startDate, $endDate):array
+    {
+        // 会员充值金额
+        $cardRechargeMoney = $this->calcuBaseModel($startDate, $endDate)
+                ->where(['type' => self::TYPE_2])
+                ->sum('pay_price') / 100;
+
+        // 已使用金额
+        $cardRechargeUsedMoney = $this->calcuBaseModel($startDate, $endDate)
+                ->where(['pay_type' => self::PAY_TYPE_5])
+                ->sum('use_balance_price') / 100;
+
+        $cardRechargeLeaveMoney = $cardRechargeMoney - $cardRechargeUsedMoney;
+
+        $hairCuters = $this->hairCuters();
+
+        $storeCardRechargeData = [];
+        // 各门店会员卡充值数据
+        foreach ($this->storeInfo() as $storeID => $storeName) {
+            $storeCardRechargeData[$storeName]['allMoney'] = $this->calcuEveryStoreCardData($startDate, $endDate, $storeID);
+            $storeCardRechargeData[$storeName]['leaveMoney'] = $this->rechargeBaseModel($startDate, $endDate, $storeID)->sum('u.balance') / 100;
+
+            // 各发型师销售充值会员卡数据
+            foreach ($hairCuters as $hairCuter) {
+                if ($hairCuter['hairdresser_store_id'] != $storeID) {
+                    continue;
+                }
+
+                // xx：5000元，剩余4000元
+                $storeCardRechargeData[$storeName]['storeHairCuter'][$hairCuter['name']]['money'] = $this->calcuBaseModel($startDate, $endDate)
+                        ->where(['store_id' => $storeID, 'type' => self::TYPE_2, 'employee_id' => $hairCuter['id']])
+                        ->sum('pay_price') / 100;
+                $storeCardRechargeData[$storeName]['storeHairCuter'][$hairCuter['name']]['leaveMoney'] = $this->rechargeBaseModel($startDate, $endDate, $storeID)
+                        ->where(['o.employee_id' => $hairCuter['id']])
+                        ->sum('u.balance') / 100;
+
+                foreach ($this->cardLevel() as $cardKey => $cardName) {
+                    $storeCardRechargeData[$storeName]['storeHairCuter'][$hairCuter['name']][$cardName] =  $this->calcuBaseModel($startDate, $endDate)
+                        ->where([
+                            'store_id' => $storeID,
+                            'type' => self::TYPE_2,
+                            'employee_id' => $hairCuter['id'],
+                            'vip_level' => $cardKey,
+                        ])
+                        ->count();
+                }
+            }
+        }
+
+        return [
+            'cardRechargeMoney' => $cardRechargeMoney,
+            'cardRechargeLeaveMoney' => $cardRechargeLeaveMoney,
+            'storeCardRechargeData' => $storeCardRechargeData,
+            'cardRechargeUsedMoney' => $cardRechargeUsedMoney,
+        ];
+    }
+
+    // 购买会员卡数据
+    public function rechargePutString()
+    {
+
+        // 累计汇总充值数据
+        $totalRechargeData = $this->rechargeData($this->getCardRechargeStartDate(),  $this->endDate);
+
+        $everyStoreRechargeStr = <<<EOT
+1.1 各门店情况\r\n
+EOT;
+        foreach ($totalRechargeData['storeCardRechargeData'] as $storeName => $cardRechargeDatum) {
+            $everyStoreRechargeStr .= $storeName . ':' . $cardRechargeDatum['allMoney'] . '元，剩余' . $cardRechargeDatum['leaveMoney'] . "元未消费。\r\n";
+
+            foreach ($cardRechargeDatum['storeHairCuter'] as $hairCuter => $value) {
+                $everyStoreRechargeStr .= <<<EOT
+\t{$hairCuter}:{$value['money']}元，剩余{$value['leaveMoney']}元未消费，累计开卡：{$value['黄金']}黄金，{$value['铂金']}铂金，{$value['钻石']}钻石\r\n
+EOT;
+            }
+
+
+        }
+
+        // 昨天充值数据
+        $yestodayRechargeData = $this->rechargeData($this->yestody . ' 00:00:00', $this->yestody . ' 23:59:59');
+
+        print_r($yestodayRechargeData);exit;
+
+        $yestodayStr = <<<EOT
+其中
+EOT;
+
+        // todo
+        foreach ($yestodayRechargeData) {
+
+        }
+
+        $str = <<<EOT
+会员卡情况
+    一、 汇总（截止到2021-06-21 23:59:59）
+    1. 会员卡总金额：{$totalRechargeData['cardRechargeMoney']}元，剩余{$totalRechargeData['cardRechargeLeaveMoney']}元未消费，已消费{$totalRechargeData['cardRechargeUsedMoney']}元
+        {$everyStoreRechargeStr}
+    二、昨日会员卡数据
+    1. 会员卡昨日金额：{$yestodayRechargeData['cardRechargeMoney']}
+        
+EOT;
+
+        echo $str;
+
+    }
+
     /**
      * 上一周的开始，结束日期
      *
@@ -416,5 +548,7 @@ $beginTime = $argv[1] . ' 00:00:00';
 $endTime = $argv[2] . ' 23:59:59';
 $yestoday = $argv[3];
 
-(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
-//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->hairCuterGrowthStr();
+//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
+
+// test
+(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->rechargePutString();
