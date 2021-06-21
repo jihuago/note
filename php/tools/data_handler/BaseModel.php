@@ -33,6 +33,7 @@ class BaseModel
             5675 => '钟伟健',
             5645 => '陈华',
             5644 => '阮赞益',
+            5701 => '许华明'
         ];
     }
 
@@ -40,7 +41,7 @@ class BaseModel
     protected function hairCuters():array
     {
         $hairCuters = $this->db->table('employee as e')
-            ->field(['id', 'name'])
+            ->field(['id', 'name', 'hairdresser_store_id'])
             ->where([
 //                'e.position' => 1,
                 'status' => 1,
@@ -58,6 +59,15 @@ class BaseModel
         }
 
         return $hairCuters;
+    }
+
+    protected function cardLevel():array
+    {
+        return [
+            4 => '钻石',
+            3 => '铂金',
+            2 => '黄金'
+        ];
     }
 
     // 门店ID
