@@ -14,8 +14,8 @@ FROM `gp_order` as o
 where o.`user_id` in (
 SELECT distinct o.`user_id`
 FROM `gp_order` as o
-where o.`create_time` BETWEEN '2021-01-10 00:00:00'
-and '2021-01-16 23:59:59'
+where o.`create_time` BETWEEN '2021-06-13 00:00:00'
+and '2021-06-20 23:59:59'
 and o.`status`= 3)
  *
  *  1.1 计算累计客户数
@@ -75,7 +75,7 @@ class Run
             $data[$values[0]][] = ['time' => $values[1] ?? 'wrong', 'store_id' => $values[2] ?? 'wrong'];
 
         }
-
+        print_r($data);exit;
         $oldUserIds = [];
         // 新户数
         $newUserNumbers = 0;
