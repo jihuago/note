@@ -32,11 +32,12 @@ func PkgErr()  {
 	https://pkg.go.dev/github.com/pkg/errors#StackTrace
 
 	*/
-	type stackTracer interface {
+	type stacker interface {
 		StackTrace() errors.StackTrace
 	}
 
-	err, ok := errors.Cause(fn()).(stackTracer)
+	// 如果转换合法，err是stackTracer类型的值
+	err, ok := errors.Cause(fn()).(stacker)
 	if !ok {
 		panic("oops, err does not implement stackTracer")
 	}
@@ -44,6 +45,10 @@ func PkgErr()  {
 	st := err.StackTrace()
 	fmt.Printf("%+v\n", st[0:2])
 
+/*	e1 := fn1()
+	fmt.Printf("%+v\n", e1)*/
+
+	fnAssertType()
 
 }
 
@@ -64,5 +69,47 @@ func fn() error {
 	e3 := errors.Wrap(e2, "middle")
 
 	return errors.Wrap(e3, "outer")
+}
+
+func fn1() error {
+	e1 := errors.New("error")
+	err := errors.WithStack(e1)
+
+	return err
+}
+
+type tester interface {
+	test() string
+}
+
+type demo struct {
+}
+
+func (d *demo) test() string {
+	return "this is a test"
+}
+
+type demo1 struct {
+
+}
+
+// 类型断言例子
+func fnAssertType()  {
+
+	var t tester
+
+	d := new(demo)
+	t = d
+
+	if v, ok := t.(*demo); ok {
+		fmt.Println(v)
+	}
+
+	getTester().(*demo)
+
+}
+
+func getTester() tester {
+	return &demo{}
 }
 
