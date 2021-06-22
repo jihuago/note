@@ -230,6 +230,7 @@ class StatisticsDailyReport extends BaseModel
             $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)->where(['store_id' => $storeID])->sum('pay_price') / 100;
         }
 
+//        print_r($data);exit;
         return $data;
     }
 
@@ -339,6 +340,7 @@ class StatisticsDailyReport extends BaseModel
     protected function outPutString()
     {
         $storeData = $this->calcuStoreData($this->startDate, $this->endDate);
+
         $yestodayData = $this->calcuEveryStoreData($this->yestody . ' 00:00:00', $this->yestody . ' 23:59:59');
 
         $this->calcuGrowth();
@@ -476,30 +478,65 @@ EOT;
         $everyStoreRechargeStr = <<<EOT
 1.1 各门店情况\r\n
 EOT;
+
+        $everyHairCuterStr = <<<EOT
+2. 发型师开卡情(汇总)\r\n
+EOT;
+
+
         foreach ($totalRechargeData['storeCardRechargeData'] as $storeName => $cardRechargeDatum) {
             $everyStoreRechargeStr .= $storeName . ':' . $cardRechargeDatum['allMoney'] . '元，剩余' . $cardRechargeDatum['leaveMoney'] . "元未消费。\r\n";
 
+            $everyHairCuterStr .= "$storeName\r\n";
             foreach ($cardRechargeDatum['storeHairCuter'] as $hairCuter => $value) {
-                $everyStoreRechargeStr .= <<<EOT
-\t{$hairCuter}:{$value['money']}元，剩余{$value['leaveMoney']}元未消费，累计开卡：{$value['黄金']}黄金，{$value['铂金']}铂金，{$value['钻石']}钻石\r\n
+
+                $everyHairCuterStr .= <<<EOT
+\t{$hairCuter}:{$value['money']}元，剩余{$value['leaveMoney']}元未消费，累计：{$value['黄金']}黄，{$value['铂金']}铂，{$value['钻石']}钻\r\n
 EOT;
             }
 
+            $everyHairCuterStr .= "\r\n";
 
         }
 
         // 昨天充值数据
         $yestodayRechargeData = $this->rechargeData($this->yestody . ' 00:00:00', $this->yestody . ' 23:59:59');
 
-        print_r($yestodayRechargeData);exit;
-
+//        print_r($yestodayRechargeData);exit;
         $yestodayStr = <<<EOT
 其中
 EOT;
+        $unSaleStr = "2. 各发型师开卡情况（昨日）\r\n \t2.1 未开卡名单\r\n";// 未开卡发型师字符串
+        $saledStr = "\t 2.2 开卡名单\r\n"; // 有开卡的发型师字符串
 
-        // todo
-        foreach ($yestodayRechargeData) {
+        foreach ($yestodayRechargeData['storeCardRechargeData'] as $storeName => $datum) {
+            $yestodayStr .= <<<EOT
+{$storeName}{$datum['allMoney']}元 \r\n
+EOT;
+            $unSaleStr .= $storeName . ":";
+            $saledStr .= $storeName . ":";
+            foreach ($datum['storeHairCuter'] as $hairCuterName => $value) {
+                $diaStr = '';
+                if ($value['money'] == 0) {
+                    $unSaleStr .= $hairCuterName . '、';
+                } else if ($value['money'] > 0) {
+                    if ($value['钻石'] > 0) {
+                        $diaStr .= $value['钻石'] . '钻';
+                    }
+                    if ($value['铂金'] > 0) {
+                        $diaStr .= $value['铂金'] . '铂';
+                    }
+                    if ($value['黄金'] > 0) {
+                        $diaStr .= $value['黄金'] . '黄';
+                    }
 
+                    $saledStr .= $hairCuterName . "(". $value['money'] ."元，{$diaStr})、";
+                }
+            }
+            $unSaleStr = trim($unSaleStr, "、");
+            $saledStr = trim($saledStr, "、");
+            $unSaleStr .= "\n\r";
+            $saledStr .= "\n\r";
         }
 
         $str = <<<EOT
@@ -507,9 +544,12 @@ EOT;
     一、 汇总（截止到2021-06-21 23:59:59）
     1. 会员卡总金额：{$totalRechargeData['cardRechargeMoney']}元，剩余{$totalRechargeData['cardRechargeLeaveMoney']}元未消费，已消费{$totalRechargeData['cardRechargeUsedMoney']}元
         {$everyStoreRechargeStr}
+        {$everyHairCuterStr}
     二、昨日会员卡数据
     1. 会员卡昨日金额：{$yestodayRechargeData['cardRechargeMoney']}
-        
+{$yestodayStr}
+{$unSaleStr}
+{$saledStr}
 EOT;
 
         echo $str;
