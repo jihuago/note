@@ -33,6 +33,7 @@ class BaseModel
             5675 => '钟伟健',
             5645 => '陈华',
             5644 => '阮赞益',
+            5701 => '许华明'
         ];
     }
 
@@ -40,7 +41,7 @@ class BaseModel
     protected function hairCuters():array
     {
         $hairCuters = $this->db->table('employee as e')
-            ->field(['id', 'name'])
+            ->field(['id', 'name', 'hairdresser_store_id'])
             ->where([
 //                'e.position' => 1,
                 'status' => 1,
@@ -60,6 +61,15 @@ class BaseModel
         return $hairCuters;
     }
 
+    protected function cardLevel():array
+    {
+        return [
+            4 => '钻石',
+            3 => '铂金',
+            2 => '黄金'
+        ];
+    }
+
     // 门店ID
     protected function storeInfo()
     {
@@ -67,7 +77,7 @@ class BaseModel
             495 => '天河保利中宇店',
             553 => '海珠江怡路店',
             497 => '海珠区叠景中路店',
-            500 => '海珠区愉景南苑店',
+//            500 => '海珠区愉景南苑店',
             501 => '海珠区纵横广场店',
 //            552 => '海珠区仲恺店',
             556 => '叠彩园店',
