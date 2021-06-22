@@ -209,13 +209,17 @@ class StatisticsDailyReport extends BaseModel
         foreach ($this->hairCuters() as $hairCuter) {
             $data['发型师'][$hairCuter['name']]['number'] = $this->calcuBaseModel($startDate, $endDate)
                 ->where([
-                    'employee_id' => $hairCuter['id']
-                ])->count();
+                    'employee_id' => $hairCuter['id'],
+                ])
+                ->where("type != ?", self::TYPE_2)
+                ->count();
 
             $data['发型师'][$hairCuter['name']]['price'] = $this->calcuBaseModel($startDate, $endDate)
                 ->where([
                     'employee_id' => $hairCuter['id']
-                ])->sum('pay_price');
+                ])
+                ->where("type != ?", self::TYPE_2)
+                ->sum('pay_price');
 
             $data['发型师'][$hairCuter['name']]['price'] /= 100;
         }
@@ -329,7 +333,7 @@ class StatisticsDailyReport extends BaseModel
             $i++;
         }
 
-        $str .= "负增长前五\n\r";
+        $str .= "业绩倒数前五\n\r";
         $i = 1;
         foreach ($negativeGrowth as $hairCuter => $value) {
             $str .= "\t" .  $i . '. ' . $hairCuter . ':' . $value . "\r\n";
