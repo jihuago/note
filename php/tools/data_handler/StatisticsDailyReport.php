@@ -133,7 +133,9 @@ class StatisticsDailyReport extends BaseModel
 
     public function run()
     {
-        $this->outPutString();
+        $str = $this->outPutString() . '=======================================' . PHP_EOL .$this->rechargePutString();
+
+        file_put_contents('./data/data' . date('YmdHis') . mt_rand(1, 100) . '.txt', $str);
     }
 
     private function calcuBaseModel(string $startDate, string $endDate)
@@ -230,7 +232,6 @@ class StatisticsDailyReport extends BaseModel
             $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)->where(['store_id' => $storeID])->sum('pay_price') / 100;
         }
 
-//        print_r($data);exit;
         return $data;
     }
 
@@ -247,12 +248,13 @@ class StatisticsDailyReport extends BaseModel
     {
         $growth = [];
         foreach ($this->lastWeekPeriod() as $key => $arr) {
-            $growth[$key] = $this->calcuEveryStoreData($arr['start'], $arr['end'])['order_money'];
+
+            $growth[$key] = $this->calcuEveryStoreData($arr['start'] . ' 00:00:00', $arr['end'] . ' 23:59:59')['order_money'];
         }
 
         $result = [];
         foreach (array_values($this->storeInfo()) as $storeName) {
-            $tmp = $growth['two'][$storeName] > 0? $growth['two'][$storeName] : 1;
+            $tmp = $growth['two'][$storeName] > 0 ? $growth['two'][$storeName] : 1;
             $result[$storeName] = round(
                 ($growth['last'][$storeName] - $growth['two'][$storeName]) / $tmp * 100,
                 2
@@ -284,7 +286,7 @@ class StatisticsDailyReport extends BaseModel
     }
 
     // 发型师个人业绩增长
-    public function hairCuterGrowth()
+    protected function hairCuterGrowth()
     {
         $growth = [];
         foreach ($this->lastWeekPeriod() as $key => $arr) {
@@ -308,7 +310,7 @@ class StatisticsDailyReport extends BaseModel
     }
 
     // 发型师个人业绩前五正负增长字符串
-    public function hairCuterGrowthStr()
+    protected function hairCuterGrowthStr()
     {
 
         $data = $this->hairCuterGrowth();
@@ -337,7 +339,7 @@ class StatisticsDailyReport extends BaseModel
         return $str;
     }
 
-    protected function outPutString()
+    protected function outPutString():string
     {
         $storeData = $this->calcuStoreData($this->startDate, $this->endDate);
 
@@ -395,16 +397,17 @@ class StatisticsDailyReport extends BaseModel
 {$this->hairCuterGrowthStr()}
 EOT;
 
-        echo $str;
+        return $str;
 
     }
 
+    // 会员卡充值开始日期
     private function getCardRechargeStartDate():string
     {
         return '2021-06-16 00:00:00';
     }
 
-    public function rechargeBaseModel($startDate, $endDate, $storeID)
+    protected function rechargeBaseModel($startDate, $endDate, $storeID)
     {
         return $this->calcuBaseModel($startDate, $endDate)
             ->where(['o.store_id' => $storeID, 'type' => self::TYPE_2])
@@ -469,7 +472,7 @@ EOT;
     }
 
     // 购买会员卡数据
-    public function rechargePutString()
+    protected function rechargePutString():string
     {
 
         // 累计汇总充值数据
@@ -482,7 +485,6 @@ EOT;
         $everyHairCuterStr = <<<EOT
 2. 发型师开卡情(汇总)\r\n
 EOT;
-
 
         foreach ($totalRechargeData['storeCardRechargeData'] as $storeName => $cardRechargeDatum) {
             $everyStoreRechargeStr .= $storeName . ':' . $cardRechargeDatum['allMoney'] . '元，剩余' . $cardRechargeDatum['leaveMoney'] . "元未消费。\r\n";
@@ -502,7 +504,6 @@ EOT;
         // 昨天充值数据
         $yestodayRechargeData = $this->rechargeData($this->yestody . ' 00:00:00', $this->yestody . ' 23:59:59');
 
-//        print_r($yestodayRechargeData);exit;
         $yestodayStr = <<<EOT
 其中
 EOT;
@@ -541,7 +542,7 @@ EOT;
 
         $str = <<<EOT
 会员卡情况
-    一、 汇总（截止到2021-06-21 23:59:59）
+    一、 汇总（截止{$this->yestody} 23:59:59）
     1. 会员卡总金额：{$totalRechargeData['cardRechargeMoney']}元，剩余{$totalRechargeData['cardRechargeLeaveMoney']}元未消费，已消费{$totalRechargeData['cardRechargeUsedMoney']}元
         {$everyStoreRechargeStr}
         {$everyHairCuterStr}
@@ -552,7 +553,7 @@ EOT;
 {$saledStr}
 EOT;
 
-        echo $str;
+        return $str;
 
     }
 
@@ -561,7 +562,7 @@ EOT;
      *
      * @return array[]
      */
-    public function lastWeekPeriod():array
+    protected function lastWeekPeriod():array
     {
 
         $twoWeekAgoStartDate = date('Y-m-d', strtotime('-2 week', strtotime($this->endDate)));
@@ -588,7 +589,7 @@ $beginTime = $argv[1] . ' 00:00:00';
 $endTime = $argv[2] . ' 23:59:59';
 $yestoday = $argv[3];
 
-//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
+(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
 
 // test
-(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->rechargePutString();
+//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->rechargePutString();
