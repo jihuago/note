@@ -154,7 +154,8 @@ class StatisticsDailyReport extends BaseModel
         $data = [];
 
         // 门店总营业额
-        $sum = $this->calcuBaseModel($startDate, $endDate)->sum('pay_price');
+        $sum = $this->calcuBaseModel($startDate, $endDate)->where("pay_type != ?", self::PAY_TYPE_5)->sum('pay_price');
+        $sum += $this->calcuBaseModel($startDate, $endDate)->where("pay_type = ?", self::PAY_TYPE_5)->sum('use_balance_price');
         $sum /= 100;
 
         $data['门店总营业额'] = $sum;
@@ -233,7 +234,15 @@ class StatisticsDailyReport extends BaseModel
         $data = [];
         foreach ($this->storeInfo() as $storeID => $storeName) {
             $data['order_number'][$storeName] = $this->calcuBaseModel($startDate, $endDate)->where(['store_id' => $storeID])->count();
-            $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)->where(['store_id' => $storeID])->sum('pay_price') / 100;
+            $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)
+                    ->where(['store_id' => $storeID])
+                    ->where("pay_type != ?", self::PAY_TYPE_5)
+                    ->sum('pay_price') / 100;
+
+            $data['order_money'][$storeName] += $this->calcuBaseModel($startDate, $endDate)
+                    ->where(['store_id' => $storeID])
+                    ->where("pay_type = ?", self::PAY_TYPE_5)
+                    ->sum('use_balance_price') / 100;
         }
 
         return $data;
