@@ -105,8 +105,6 @@ func fnAssertType()  {
 		fmt.Println(v)
 	}
 
-	getTester().(*demo)
-
 }
 
 func getTester() tester {
