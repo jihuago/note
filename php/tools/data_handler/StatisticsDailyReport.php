@@ -154,7 +154,8 @@ class StatisticsDailyReport extends BaseModel
         $data = [];
 
         // 门店总营业额
-        $sum = $this->calcuBaseModel($startDate, $endDate)->sum('pay_price');
+        $sum = $this->calcuBaseModel($startDate, $endDate)->where("pay_type != ?", self::PAY_TYPE_5)->sum('pay_price');
+        $sum += $this->calcuBaseModel($startDate, $endDate)->where("pay_type = ?", self::PAY_TYPE_5)->sum('use_balance_price');
         $sum /= 100;
 
         $data['门店总营业额'] = $sum;
@@ -209,13 +210,17 @@ class StatisticsDailyReport extends BaseModel
         foreach ($this->hairCuters() as $hairCuter) {
             $data['发型师'][$hairCuter['name']]['number'] = $this->calcuBaseModel($startDate, $endDate)
                 ->where([
-                    'employee_id' => $hairCuter['id']
-                ])->count();
+                    'employee_id' => $hairCuter['id'],
+                ])
+                ->where("type != ?", self::TYPE_2)
+                ->count();
 
             $data['发型师'][$hairCuter['name']]['price'] = $this->calcuBaseModel($startDate, $endDate)
                 ->where([
                     'employee_id' => $hairCuter['id']
-                ])->sum('pay_price');
+                ])
+                ->where("type != ?", self::TYPE_2)
+                ->sum('pay_price');
 
             $data['发型师'][$hairCuter['name']]['price'] /= 100;
         }
@@ -229,7 +234,15 @@ class StatisticsDailyReport extends BaseModel
         $data = [];
         foreach ($this->storeInfo() as $storeID => $storeName) {
             $data['order_number'][$storeName] = $this->calcuBaseModel($startDate, $endDate)->where(['store_id' => $storeID])->count();
-            $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)->where(['store_id' => $storeID])->sum('pay_price') / 100;
+            $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)
+                    ->where(['store_id' => $storeID])
+                    ->where("pay_type != ?", self::PAY_TYPE_5)
+                    ->sum('pay_price') / 100;
+
+            $data['order_money'][$storeName] += $this->calcuBaseModel($startDate, $endDate)
+                    ->where(['store_id' => $storeID])
+                    ->where("pay_type = ?", self::PAY_TYPE_5)
+                    ->sum('use_balance_price') / 100;
         }
 
         return $data;
@@ -329,7 +342,7 @@ class StatisticsDailyReport extends BaseModel
             $i++;
         }
 
-        $str .= "负增长前五\n\r";
+        $str .= "业绩倒数前五\n\r";
         $i = 1;
         foreach ($negativeGrowth as $hairCuter => $value) {
             $str .= "\t" .  $i . '. ' . $hairCuter . ':' . $value . "\r\n";
