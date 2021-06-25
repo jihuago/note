@@ -15,7 +15,7 @@
 * [trait](php/trait)
 * [对象与设计模式](./对象与设计)
 * [php新特性](php)
-* [一文说清CGI、FastCGI关系](./HTTP/一文说清CGI、FastCGI关系.md)
+* [一文说清CGI、FastCGI关系](other/一文说清CGI、FastCGI关系.md)
 
 ### Redis
 * [redis底层数据结构](./redis/redis底层数据结构.md)
