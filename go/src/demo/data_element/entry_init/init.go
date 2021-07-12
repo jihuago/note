@@ -2,6 +2,7 @@ package entry_init
 
 import (
 	"data_element/app/controllers"
+	"data_element/app/controllers/concurrence"
 	"data_element/app/controllers/db"
 	"data_element/app/controllers/err"
 	"data_element/app/controllers/learnGoWithTest/integers"
@@ -34,6 +35,8 @@ func Init()  {
 	r.Get("interface", db.DemoGorm)
 	r.Get("err", err.DemoErr)
 	r.Get("err1", err.PkgErr)
+	r.Get("atomic", concurrence.AtomicDemo)
+	r.Get("sync", concurrence.SyncMapDemo)
 
 	r.Run()
 }
