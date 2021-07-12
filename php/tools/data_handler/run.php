@@ -37,6 +37,7 @@ and o.`status`= 3
  *      php run.php 开始日期(Y-m-d) 结束日期   1步骤得到的文件    1.2得到的文件   1.1步骤得到的结果数字
  *      如： php run.php 2021-01-03 2021-01-09 ./data/sqlresult_5540750.csv ./data/sqlresult_5543420.csv  2345
  *
+ * 3. 新增男女比例，到运营后台统计
  */
 
 class Run
