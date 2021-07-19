@@ -4,6 +4,7 @@ import (
 	"data_element/app/controllers"
 	"data_element/app/controllers/concurrence"
 	"data_element/app/controllers/db"
+	string2 "data_element/app/controllers/deep_golang/string"
 	"data_element/app/controllers/err"
 	"data_element/app/controllers/learnGoWithTest/integers"
 	"data_element/common"
@@ -37,6 +38,7 @@ func Init()  {
 	r.Get("err1", err.PkgErr)
 	r.Get("atomic", concurrence.AtomicDemo)
 	r.Get("sync", concurrence.SyncMapDemo)
+	r.Get("deep_str", string2.DemoStr)
 
 	r.Run()
 }
