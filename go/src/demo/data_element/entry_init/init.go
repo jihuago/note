@@ -4,6 +4,7 @@ import (
 	"data_element/app/controllers"
 	"data_element/app/controllers/concurrence"
 	"data_element/app/controllers/db"
+	_defer "data_element/app/controllers/deep_golang/defer"
 	string2 "data_element/app/controllers/deep_golang/string"
 	"data_element/app/controllers/err"
 	"data_element/app/controllers/learnGoWithTest/integers"
@@ -39,6 +40,7 @@ func Init()  {
 	r.Get("atomic", concurrence.AtomicDemo)
 	r.Get("sync", concurrence.SyncMapDemo)
 	r.Get("deep_str", string2.DemoStr)
+	r.Get("deep_defer", _defer.DeepDefer)
 
 	r.Run()
 }
