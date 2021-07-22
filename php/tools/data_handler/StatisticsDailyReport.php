@@ -414,6 +414,66 @@ EOT;
 
     }
 
+    /*
+
+   明天起在店t长群发这些内容就是了；
+昨天业绩排名；保利
+纵横
+本月总业绩排名；
+纵横
+保利中
+目前个人业绩前排名：
+目前个人业绩倒数排名：
+
+     */
+    public function outputRange()
+    {
+        $yestodayData = $this->calcuEveryStoreData($this->yestody . ' 00:00:00', $this->yestody . ' 23:59:59');
+        arsort($yestodayData);
+
+        $str = <<<EOT
+昨天门店业绩排名：\n
+EOT;
+        $i = 1;
+        foreach ($yestodayData['order_money'] as $storeName => $value) {
+            $str .= "第" . $i . "名：" . $storeName . "，金额：" . $value . "元\n";
+            $i++;
+        }
+
+        $str .= "\n本月门店总业绩排名：\n\n";
+
+        $currentMonthData = $this->calcuEveryStoreData($this->startDate . ' 00:00:00', $this->endDate . ' 23:59:59');
+        arsort($currentMonthData);
+
+        $i = 1;
+        foreach ($currentMonthData['order_money'] as $storeName => $value) {
+            $str .= "第" . $i . "名：" . $storeName . "，金额：" . $value . "元\n";
+            $i++;
+        }
+
+        // 统计发型师订单数、业绩
+        $hairCuterData = $this->calcuHairCuterSaleData($this->startDate . ' 00:00:00', $this->endDate . ' 23:59:59');
+
+        $data['前五'] = array_slice($this->array_sort($hairCuterData['发型师'], 'price', SORT_DESC),0, 5);
+        $data['后五'] = array_slice($this->array_sort($hairCuterData['发型师'], 'price', SORT_ASC),0, 5);
+
+        $i = 1;
+        $str .= "本月个人业绩前五：";
+        foreach ($data['前五'] as $cuterName => $datum) {
+            $str .= "\n{$i}、{$cuterName}，金额：{$datum['price']}元\n";
+            $i++;
+        }
+
+        $i = 1;
+        $str .= "本月个人业绩倒数五名：";
+        foreach ($data['后五'] as $cuterName => $datum) {
+            $str .= "\n{$i}、{$cuterName}，金额：{$datum['price']}元\n";
+            $i++;
+        }
+
+        echo $str;
+    }
+
     // 会员卡充值开始日期
     private function getCardRechargeStartDate():string
     {
@@ -602,7 +662,7 @@ $beginTime = $argv[1] . ' 00:00:00';
 $endTime = $argv[2] . ' 23:59:59';
 $yestoday = $argv[3];
 
-(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
+//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
 
 // test
-//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->rechargePutString();
+(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->outputRange();
