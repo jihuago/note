@@ -133,7 +133,9 @@ class StatisticsDailyReport extends BaseModel
 
     public function run()
     {
-        $str = $this->outPutString() . '=======================================' . PHP_EOL .$this->rechargePutString();
+        $str = $this->outPutString() . '=======================================' . PHP_EOL .
+            $this->rechargePutString() . PHP_EOL.
+            $this->outputRange();
 
         file_put_contents('./data/data' . date('YmdHis') . mt_rand(1, 100) . '.txt', $str);
     }
@@ -220,9 +222,16 @@ class StatisticsDailyReport extends BaseModel
                     'employee_id' => $hairCuter['id']
                 ])
                 ->where("type != ?", self::TYPE_2)
-                ->sum('pay_price');
+                ->sum('pay_price') / 100;
 
-            $data['发型师'][$hairCuter['name']]['price'] /= 100;
+            $data['发型师'][$hairCuter['name']]['price'] += $this->calcuBaseModel($startDate, $endDate)
+                                                     ->where(['employee_id' => $hairCuter['id']])
+                                                     ->where("pay_type = ?", self::PAY_TYPE_5)
+                                                     ->sum('use_balance_price') / 100;
+
+
+
+
         }
 
         return $data;
@@ -233,16 +242,18 @@ class StatisticsDailyReport extends BaseModel
     {
         $data = [];
         foreach ($this->storeInfo() as $storeID => $storeName) {
-            $data['order_number'][$storeName] = $this->calcuBaseModel($startDate, $endDate)->where(['store_id' => $storeID])->count();
+            $data['order_number'][$storeName] = $this->calcuBaseModel($startDate, $endDate)
+                                                     ->where(['store_id' => $storeID])
+                                                     ->count();
             $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)
                     ->where(['store_id' => $storeID])
                     ->where("pay_type != ?", self::PAY_TYPE_5)
                     ->sum('pay_price') / 100;
 
-            $data['order_money'][$storeName] += $this->calcuBaseModel($startDate, $endDate)
+/*            $data['order_money'][$storeName] += $this->calcuBaseModel($startDate, $endDate)
                     ->where(['store_id' => $storeID])
                     ->where("pay_type = ?", self::PAY_TYPE_5)
-                    ->sum('use_balance_price') / 100;
+                    ->sum('use_balance_price') / 100;*/
         }
 
         return $data;
@@ -429,7 +440,7 @@ EOT;
     public function outputRange()
     {
         $yestodayData = $this->calcuEveryStoreData($this->yestody . ' 00:00:00', $this->yestody . ' 23:59:59');
-        arsort($yestodayData);
+        arsort($yestodayData['order_money']);
 
         $str = <<<EOT
 昨天门店业绩排名：\n
@@ -443,7 +454,7 @@ EOT;
         $str .= "\n本月门店总业绩排名：\n\n";
 
         $currentMonthData = $this->calcuEveryStoreData($this->startDate . ' 00:00:00', $this->endDate . ' 23:59:59');
-        arsort($currentMonthData);
+        arsort($currentMonthData['order_money']);
 
         $i = 1;
         foreach ($currentMonthData['order_money'] as $storeName => $value) {
@@ -471,7 +482,7 @@ EOT;
             $i++;
         }
 
-        echo $str;
+        return $str;
     }
 
     // 会员卡充值开始日期
@@ -662,7 +673,7 @@ $beginTime = $argv[1] . ' 00:00:00';
 $endTime = $argv[2] . ' 23:59:59';
 $yestoday = $argv[3];
 
-//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
+(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->run();
 
 // test
-(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->outputRange();
+//(new StatisticsDailyReport($beginTime, $endTime, $yestoday))->outputRange();
