@@ -1,6 +1,8 @@
 package main
 
-import "go101/web"
+import (
+	"go101/web"
+)
 
 func main()  {
 	//_struct.StructDefine()
@@ -10,4 +12,6 @@ func main()  {
 	//functionAndCondition.ConditionDemo()
 	//_struct.RunInterface()
 	web.RunWeb()
+	//packages.Md5Demo()
+
 }
