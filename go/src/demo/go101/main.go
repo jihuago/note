@@ -1,11 +1,13 @@
 package main
 
-import "go101/functionAndCondition"
+import "go101/web"
 
 func main()  {
 	//_struct.StructDefine()
 	//keyword.KeywordDemo()
 	//slice.SliceDemo()
 	//_map.MapDemo()
-	functionAndCondition.ConditionDemo()
+	//functionAndCondition.ConditionDemo()
+	//_struct.RunInterface()
+	web.RunWeb()
 }
