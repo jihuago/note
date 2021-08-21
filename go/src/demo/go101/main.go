@@ -1,6 +1,6 @@
 package main
 
-import "go101/web"
+import "go101/concurrent"
 
 func main()  {
 	//_struct.StructDefine()
@@ -9,5 +9,7 @@ func main()  {
 	//_map.MapDemo()
 	//functionAndCondition.ConditionDemo()
 	//_struct.RunInterface()
-	web.RunWeb()
+	//web.RunWeb()
+	//packages.Md5Demo()
+	concurrent.ContextDemo()
 }
