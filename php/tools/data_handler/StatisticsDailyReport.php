@@ -204,7 +204,7 @@ class StatisticsDailyReport extends BaseModel
         return $data;
     }
 
-    // 统计发型师订单数、业绩
+    // 统计发型师订单数、劳动业绩
     protected function calcuHairCuterSaleData($startDate, $endDate):array
     {
         $data = [];
@@ -217,11 +217,13 @@ class StatisticsDailyReport extends BaseModel
                 ->where("type != ?", self::TYPE_2)
                 ->count();
 
+            // 计算发型师劳动业绩
             $data['发型师'][$hairCuter['name']]['price'] = $this->calcuBaseModel($startDate, $endDate)
                 ->where([
                     'employee_id' => $hairCuter['id']
                 ])
                 ->where("type != ?", self::TYPE_2)
+                ->where("type != ?", self::TYPE_3)
                 ->sum('pay_price') / 100;
 
             $data['发型师'][$hairCuter['name']]['price'] += $this->calcuBaseModel($startDate, $endDate)
@@ -237,13 +239,15 @@ class StatisticsDailyReport extends BaseModel
         return $data;
     }
 
-    // 各各门店销售情况
+    // 各各门店销售情况（现金 = 购买次卡+充值+微信支付的）
     protected function calcuEveryStoreData($startDate, $endDate)
     {
         $data = [];
         foreach ($this->storeInfo() as $storeID => $storeName) {
             $data['order_number'][$storeName] = $this->calcuBaseModel($startDate, $endDate)
                                                      ->where(['store_id' => $storeID])
+                                                     ->where("pay_type != ?", self::TYPE_3)
+                                                     ->where("pay_type != ?", self::TYPE_2)
                                                      ->count();
             $data['order_money'][$storeName] = $this->calcuBaseModel($startDate, $endDate)
                     ->where(['store_id' => $storeID])
@@ -263,7 +267,7 @@ class StatisticsDailyReport extends BaseModel
     protected function calcuEveryStoreCardData($startDate, $endDate, $storeID)
     {
         return $this->calcuBaseModel($startDate, $endDate)
-                ->where(['store_id' => $storeID, 'type' => self::TYPE_2])
+                ->where(['store_id' => $storeID, 'type' => self::TYPE_2, 'status' => 3])
                 ->sum('pay_price') / 100;
     }
 
@@ -443,7 +447,7 @@ EOT;
         arsort($yestodayData['order_money']);
 
         $str = <<<EOT
-昨天门店业绩排名：\n
+昨天门店实收业绩排名：\n
 EOT;
         $i = 1;
         foreach ($yestodayData['order_money'] as $storeName => $value) {
@@ -451,7 +455,7 @@ EOT;
             $i++;
         }
 
-        $str .= "\n本月门店总业绩排名：\n\n";
+        $str .= "\n本月门店实收总业绩排名：\n\n";
 
         $currentMonthData = $this->calcuEveryStoreData($this->startDate . ' 00:00:00', $this->endDate . ' 23:59:59');
         arsort($currentMonthData['order_money']);
@@ -469,14 +473,14 @@ EOT;
         $data['后五'] = array_slice($this->array_sort($hairCuterData['发型师'], 'price', SORT_ASC),0, 5);
 
         $i = 1;
-        $str .= "本月个人业绩前五：";
+        $str .= "本月个人劳动业绩前五：";
         foreach ($data['前五'] as $cuterName => $datum) {
             $str .= "\n{$i}、{$cuterName}，金额：{$datum['price']}元\n";
             $i++;
         }
 
         $i = 1;
-        $str .= "本月个人业绩倒数五名：";
+        $str .= "本月个人劳动业绩倒数五名：";
         foreach ($data['后五'] as $cuterName => $datum) {
             $str .= "\n{$i}、{$cuterName}，金额：{$datum['price']}元\n";
             $i++;
@@ -494,7 +498,7 @@ EOT;
     protected function rechargeBaseModel($startDate, $endDate, $storeID)
     {
         return $this->calcuBaseModel($startDate, $endDate)
-            ->where(['o.store_id' => $storeID, 'type' => self::TYPE_2])
+            ->where(['o.store_id' => $storeID, 'type' => self::TYPE_2, 'status' => 3])
             ->join('user as u', 'u.id = o.user_id');
     }
 
@@ -503,11 +507,13 @@ EOT;
         // 会员充值金额
         $cardRechargeMoney = $this->calcuBaseModel($startDate, $endDate)
                 ->where(['type' => self::TYPE_2])
+                ->where(['status' => 3])
                 ->sum('pay_price') / 100;
 
         // 已使用金额
         $cardRechargeUsedMoney = $this->calcuBaseModel($startDate, $endDate)
                 ->where(['pay_type' => self::PAY_TYPE_5])
+                ->where(['status' => 3])
                 ->sum('use_balance_price') / 100;
 
         $cardRechargeLeaveMoney = $cardRechargeMoney - $cardRechargeUsedMoney;
