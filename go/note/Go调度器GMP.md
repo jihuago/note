@@ -25,14 +25,14 @@
 #### 简单的M:N调度器
 在简单的M:N调度器中，有一个全局运行队列，某些操作将一个新的goroutine放入运行队列。M个内核线程访问调度程序从“运行队列”中获取并运行goroutine。多个
 线程尝试访问相同的内存区域，因此使用互斥锁来同步对该运行队列的访问。
-![](../images/illustrated-tales-of-go-runtime-scheduler-6.png)
+![](../../images/illustrated-tales-of-go-runtime-scheduler-6.png)
 
 通过Mutex同步全局运行队列，会遇到一些问题：
 1. 缓存一致性保证的开销
 2. 在创建，销毁和调度Goroutine G时进行激烈的锁竞争
 
 #### 分布式调度程序：每个线程一个运行队列
-![](../images/illustrated-tales-of-go-runtime-scheduler-14.png)
+![](../../images/illustrated-tales-of-go-runtime-scheduler-14.png)
 直接好处是，每个线程的本地运行队列现在都没有使用mutex。依然有一个带有mutex的全局运行队列，但仅在特殊情况下使用。它不会影响可伸缩性。
 Go中，轮询运行队列的顺序如下：
 1. 本地运行队列
@@ -41,7 +41,7 @@ Go中，轮询运行队列的顺序如下：
 4. 工作偷窃（work stealing）
 * work stealing 
     如果本地工作队列为空，请尝试从其他队列中偷窃工作
-![](../images/illustrated-tales-of-go-runtime-scheduler-15.png)  
+![](../../images/illustrated-tales-of-go-runtime-scheduler-15.png)  
 到目前为止，Go运行时的调度器具有以下功能：
     * 它可以处理并行执行（使用多线程）
     * 处理阻塞系统调用和网络I/O
@@ -55,11 +55,11 @@ Go中，轮询运行队列的顺序如下：
 
 #### M:P:N(3级调度程序)：引入逻辑处理器P
 P 表示处理器，可以将其视为在线程上运行的本地调度程序
-![](../images/illustrated-tales-of-go-runtime-scheduler-17.png)
+![](../../images/illustrated-tales-of-go-runtime-scheduler-17.png)
 > 逻辑进程P的数量始终是固定的。默认为当前进程可以使用的逻辑CPU数量
 
 我们将本地运行队列放入固定数量的逻辑处理器中（而不是每个内核线程一个本地运行队列）
-![](../images/illustrated-tales-of-go-runtime-scheduler-18.png)
+![](../../images/illustrated-tales-of-go-runtime-scheduler-18.png)
 Go运行时首先将根据计算机的逻辑CPU数量创建固定数量的逻辑处理器P，所以现在我们以下期间没有了恒定的开销：
 * work stealing ：只需扫描固定数量的逻辑处理器P的本地运行队列
 * 垃圾回收，内存分配器也将获得相同的好处
