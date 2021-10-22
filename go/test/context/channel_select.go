@@ -4,12 +4,10 @@ import (
 	"fmt"
 )
 
-var stop chan struct{}
-
 // 例子： chan + select方式来通知goroutine结束
 func main()  {
 
-	stop = make(chan struct{})
+	var stop = make(chan struct{})
 
 	for r := range readFile(stop) {
 		fmt.Println(r)
@@ -18,8 +16,6 @@ func main()  {
 			break
 		}
 	}
-	//time.Sleep(time.Second)
-	close(stop)
 }
 
 
@@ -32,6 +28,7 @@ func readFile(stop chan struct{}) <- chan int {
 			select {
 			case <- stop :
 				fmt.Println("Over!")
+				close(stop)
 				return
 			case result <- n:
 				n++
