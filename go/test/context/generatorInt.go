@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"time"
 )
 
 func main()  {
@@ -23,7 +22,7 @@ func main()  {
 	// 从Done()方法中获取chan，如果能通过Done()方法收到值，意味着context已经发起了取消请求，我们
 	//r := <- ctx.Done()
 	//fmt.Println(r, ctx.Err())
-	time.Sleep(time.Millisecond)
+	//time.Sleep(5 * time.Millisecond)
 }
 
 // 生成>=1的整数
@@ -37,6 +36,10 @@ func generatorInt(ctx context.Context) <-chan int {
 			case r := <- ctx.Done():
 				fmt.Println("test:", r, ctx.Err())
 				return
+			//case <- time.After(time.Millisecond):
+			//	fmt.Println("time out")
+			//
+			//	return
 			case res <- n:
 				n++
 			}
