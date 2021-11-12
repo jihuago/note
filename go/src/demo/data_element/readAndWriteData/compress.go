@@ -28,7 +28,7 @@ func TestReadCompress()  {
 	for {
 		line, err := r.ReadString('\n')
 		if err != nil {
-			fmt.Println("Done reading file")
+			fmt.Println("Done reading filesystem")
 			os.Exit(0)
 		}
 		fmt.Println(line)

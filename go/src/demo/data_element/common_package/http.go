@@ -73,7 +73,7 @@ func DemoTestWithParam()  {
 
 	file, err := os.OpenFile("./public/" + Date(time.Now(), "20060102030405") + ".html", os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		fmt.Printf("open file failed:%v", err)
+		fmt.Printf("open filesystem failed:%v", err)
 		return
 	}
 
