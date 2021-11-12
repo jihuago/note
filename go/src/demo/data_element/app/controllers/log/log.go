@@ -11,7 +11,7 @@ func LogPrint()  {
 	logFile, err := os.OpenFile("./runtime/logs/test.log", os.O_CREATE | os.O_WRONLY | os.O_APPEND, 0644)
 
 	if err != nil {
-		fmt.Println("open log file failed, err:", err)
+		fmt.Println("open log filesystem failed, err:", err)
 		return
 	}
 
