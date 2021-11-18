@@ -1,6 +1,8 @@
 package main
 
-import "go101/concurrent"
+import (
+	string1 "go101/string"
+)
 
 func main()  {
 	//_struct.StructDefine()
@@ -11,5 +13,6 @@ func main()  {
 	//_struct.RunInterface()
 	//web.RunWeb()
 	//packages.Md5Demo()
-	concurrent.ContextDemo()
+	//concurrent.ContextDemo()
+	string1.Stringdemo()
 }
