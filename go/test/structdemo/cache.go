@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync/atomic"
 	"unsafe"
 )
 
@@ -28,6 +29,17 @@ func main() {
 	// 结构体占用内存过大的问题： 根据计算对齐值进行成员顺序的拼凑，可以一定程度上缩小结构体占用的内存
 	// 1. 内存对齐影响struct的大小
 	// 2. struct的字段顺序影响struct的大小
+
+	// 内存对齐遇到的问题： 在 x86 平台上原子操作 64bit 指针。之所以要强制对齐，是因为在 32bit 平台下进行 64bit 原子操作要求必须 8 字节对齐，否则程序会 panic
+	type T3 struct {
+		b int64
+		c int32
+		//_ int32
+		d int64
+	}
+
+	a := T3{}
+	atomic.AddInt64(&a.d, 1)
 
 
 }
