@@ -3,3 +3,4 @@
 go/src/module-repo/
 *.exe
 vendor
+node_modules
